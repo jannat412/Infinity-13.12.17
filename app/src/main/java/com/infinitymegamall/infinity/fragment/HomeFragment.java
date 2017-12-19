@@ -1,6 +1,5 @@
 package com.infinitymegamall.infinity.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -29,16 +27,17 @@ import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.infinitymegamall.infinity.Activity.HomePageActivity;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyCategory;
-import com.infinitymegamall.infinity.MyExclusive;
 import com.infinitymegamall.infinity.MyNewArival;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
 import com.infinitymegamall.infinity.adapter.CategorylistAdapter;
 import com.infinitymegamall.infinity.adapter.ExclusivelistAdapter;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
+import com.infinitymegamall.infinity.adapter.Product_details_adapter;
 import com.infinitymegamall.infinity.model.Exclusive;
 import com.infinitymegamall.infinity.model.HomeCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
+import com.infinitymegamall.infinity.model.Product_details;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,8 +65,13 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static ArrayList<NewArrival> newArrivals;
     private static RecyclerView.Adapter newArrivalAdapter;
 
+    private RecyclerView productDetailsList;
+    private static ArrayList<Product_details> newProductDetails;
+    private static RecyclerView.Adapter newProductDetailAdapter;
 
-    String url ="https://infinitymegamall.com/wp-json/wc/v2/products?after=2017-02-19T16:39:57-08:00";
+
+
+    String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
@@ -92,6 +96,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         categorylistView = (RecyclerView) getActivity().findViewById(R.id.category_list);
         exclusivelist = (GridView) getActivity().findViewById(R.id.exclusive);
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
+        productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -108,6 +113,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
             ));
         }
+
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        productDetailsList.setHasFixedSize(true);
+        productDetailsList.setLayoutManager(layoutManager2);
+
+        newProductDetails = new ArrayList<Product_details>();
+        newProductDetails.add(new Product_details(2,"shuvo","2000","https://opensource.org/files/osi_keyhole_300X300_90ppi_0.png"));
+        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
+        productDetailsList.setAdapter(newProductDetailAdapter);
 
         categorylistAdapter = new CategorylistAdapter(getActivity(), categories);
         categorylistView.setAdapter(categorylistAdapter);
@@ -197,6 +211,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             mDemoSlider.addOnPageChangeListener(this);
         }
 
+
+
     }
 
     public void request2(){
@@ -236,17 +252,17 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-
+                Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
 
             }
         }){
 
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
                 String credentials = username+":"+ password;
                 String auth = "Basic "
                         + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
                 headers.put("Content-Type", "application/json");
                 headers.put("Authorization", auth);
                 return headers;
