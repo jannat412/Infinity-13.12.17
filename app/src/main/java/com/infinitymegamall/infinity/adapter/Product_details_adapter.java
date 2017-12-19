@@ -58,13 +58,17 @@ public class Product_details_adapter extends RecyclerView.Adapter<Product_detail
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+
+        if (imageLoader == null)
+            imageLoader = Server_request.getInstance().getImageLoader();
+
         TextView textViewProductName = holder.textViewProductName;
         TextView textViewProductPrice= holder.textViewProductPrice;
         NetworkImageView networkImageViewProductImage = holder.networkImageViewProductImage;
 
         textViewProductName.setText(product_details.get(position).getProduct_name());
         textViewProductPrice.setText(product_details.get(position).getProduct_price());
-        networkImageViewProductImage.setImageUrl(product_details.get(position).getProduct_price(), imageLoader);
+        networkImageViewProductImage.setImageUrl(product_details.get(position).getProduct_image(), imageLoader);
     }
     @Override
     public int getItemCount() {

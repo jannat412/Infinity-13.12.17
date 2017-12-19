@@ -33,19 +33,19 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:textSize="12sp"
-                    android:text="EXCLUSIVE PANJABI EXCLUSIVE PANJABI EXCLUSIVE PANJABI "
+                    android:text="EXCLUSIVE PANJABI"
                     android:textColor="@android:color/black"
                     />
                 <TextView
                     android:id="@+id/product_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:padding="5dp"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
                     android:textSize="12sp"
                     android:text="14500"
                     android:textStyle="bold"
-                    android:textColor="@android:color/holo_red_dark"
+                    android:textColor="@color/red"
                     />
             </LinearLayout>
 

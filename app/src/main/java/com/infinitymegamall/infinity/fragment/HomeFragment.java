@@ -119,7 +119,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         productDetailsList.setLayoutManager(layoutManager2);
 
         newProductDetails = new ArrayList<Product_details>();
-        newProductDetails.add(new Product_details(2,"shuvo","2000","https://opensource.org/files/osi_keyhole_300X300_90ppi_0.png"));
+        newProductDetails.add(new Product_details(2,"shuvo","৳ 2000","https://opensource.org/files/osi_keyhole_300X300_90ppi_0.png"));
+        newProductDetails.add(new Product_details(4,"jannat","৳ 60000","https://qph.ec.quoracdn.net/main-thumb-t-1800-200-lOn8kKfhqfcTcKdt2GwaLfGnC0jEjHmV.jpeg"));
+
         newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
         productDetailsList.setAdapter(newProductDetailAdapter);
 
