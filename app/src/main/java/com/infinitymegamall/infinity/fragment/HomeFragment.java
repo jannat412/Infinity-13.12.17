@@ -2,6 +2,7 @@ package com.infinitymegamall.infinity.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,7 +69,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private RecyclerView productDetailsList;
     private static ArrayList<Product_details> newProductDetails;
     private static RecyclerView.Adapter newProductDetailAdapter;
-
+    private View v;
 
 
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
@@ -90,6 +91,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        v = getActivity().findViewById(R.id.home_activity_id);
 
         HomePageActivity homePageActivity = (HomePageActivity) getActivity();
         mDemoSlider = (SliderLayout)getActivity().findViewById(R.id.slider);
@@ -243,6 +246,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
                             }
 
                         }
@@ -254,7 +258,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
 
             }
         }){
