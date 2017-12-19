@@ -14,7 +14,6 @@ import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Product_details;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by shuvo on 19-Dec-17.
@@ -50,7 +49,7 @@ public class Product_details_adapter extends RecyclerView.Adapter<Product_detail
     public Product_details_adapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                              int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.new_arrival_details, parent, false);
+                .inflate(R.layout.new_products_details, parent, false);
 
         Product_details_adapter.MyViewHolder myViewHolder = new Product_details_adapter.MyViewHolder(view);
         return myViewHolder;

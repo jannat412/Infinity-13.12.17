@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://E:\Android project\Infinity-13.12.17\Infinity 13.12.17.iml" filepath="E:\Android project\Infinity-13.12.17\Infinity 13.12.17.iml" />
       <module fileurl="file://$PROJECT_DIR$/Infinity-13.12.17.iml" filepath="$PROJECT_DIR$/Infinity-13.12.17.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
