@@ -40,6 +40,7 @@ import com.infinitymegamall.infinity.model.Exclusive;
 import com.infinitymegamall.infinity.model.HomeCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.Product_details;
+import com.infinitymegamall.infinity.model.nv_category;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,6 +121,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             ));
         }
 
+
         categorylistAdapter = new CategorylistAdapter(getActivity(), categories);
         categorylistView.setAdapter(categorylistAdapter);
         categorylistView.addOnItemTouchListener(
@@ -160,55 +162,55 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                             case "WOMEN":
                                 String women_url =main_url+"34";
                                 newProductDetails.clear();
-                                request3(women_url);
+                                product_details_api_request(women_url);
                                 break;
 
                             case "MEN":
                                 String men_url =main_url+"37";
                                 newProductDetails.clear();
-                                request3(men_url);
+                                product_details_api_request(men_url);
                                 break;
 
                             case "KIDS":
                                 String kid =main_url+"46";
                                 newProductDetails.clear();
-                                request3(kid);
+                                product_details_api_request(kid);
                                 break;
 
                             case "WATCHES":
                                 String WATCHES =main_url+"88";
                                 newProductDetails.clear();
-                                request3(WATCHES);
+                                product_details_api_request(WATCHES);
                                 break;
 
                             case "SUNGLASES":
                                 String SUNGLASES =main_url+"54";
                                 newProductDetails.clear();
-                                request3(SUNGLASES);
+                                product_details_api_request(SUNGLASES);
                                 break;
 
                             case "COSMETICS":
                                 String COSMETICS =main_url+"280";
                                 newProductDetails.clear();
-                                request3(COSMETICS);
+                                product_details_api_request(COSMETICS);
                                 break;
 
                             case "PERFUMES & BODY SPRAY":
                                 String PERFUMES =main_url+"84";
                                 newProductDetails.clear();
-                                request3(PERFUMES);
+                                product_details_api_request(PERFUMES);
                                 break;
 
                             case "WINTER COLLECTION":
                                 String WINTER =main_url+"239";
                                 newProductDetails.clear();
-                                request3(WINTER);
+                                product_details_api_request(WINTER);
                                 break;
 
                             case "LADIES BAG":
                                 String LADIES =main_url+"134";
                                 newProductDetails.clear();
-                                request3(LADIES);
+                                product_details_api_request(LADIES);
                                 break;
                             //"KIDS", "WATCHES", "SUNGLASES", "COSMETICS", "PERFUMES & BODY SPRAY","LADIES BAG", "WINTER COLLECTION"
 
@@ -274,7 +276,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
         newProductDetails = new ArrayList<Product_details>();
         String men_product_url =main_url+"37";
-        request3(men_product_url);
+        product_details_api_request(men_product_url);
         newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
         productDetailsList.setAdapter(newProductDetailAdapter);
 
@@ -342,7 +344,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     }
 
-    public void request3( String api){
+    public void product_details_api_request(String api){
         new_arrival_progress.setVisibility(View.VISIBLE);
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
@@ -406,6 +408,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
 
     @Override
     public void onStop() {

@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,6 +24,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyData;
@@ -40,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.android.volley.VolleyLog.TAG;
+
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,9 +55,14 @@ public class HomePageActivity extends AppCompatActivity
     public FragmentManager fragmentManager;
     private HomeFragment homeFragment;
     private CategoryItemFragment categoryItemFragment;
+
+    View v;
+
+    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=15&page=1";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=20";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
+
 
 
     @Override
@@ -62,17 +71,20 @@ public class HomePageActivity extends AppCompatActivity
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        v = findViewById(R.id.home_activity_id);
 
         listView = (ListView) findViewById(R.id.navigation_list);
 
         categories = new ArrayList<nv_category>();
-        for (int i = 0; i < MyData.category.length; i++) {
+
+        categories_api_request();
+/*        for (int i = 0; i < MyData.category.length; i++) {
             categories.add(new nv_category(
                     MyData.category[i],
                     MyData.id[i]
 
             ));
-        }
+        }*/
         adapter = new NavigationCategoryAdapter(this, categories);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -124,6 +136,65 @@ public class HomePageActivity extends AppCompatActivity
 
 
     }
+
+    public void categories_api_request(){
+
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(category_url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                nv_category model = new nv_category();
+                                model.setId(obj.getInt("id"));
+                                model.setCategoryName(obj.getString("name"));
+
+                                // adding model to movies array
+                                categories.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        adapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
 
     @Override
     public void onBackPressed() {
