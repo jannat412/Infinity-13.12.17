@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -71,6 +72,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static RecyclerView.Adapter newProductDetailAdapter;
     private View v;
 
+    private ProgressBar new_arrival_progress;
+
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
@@ -100,7 +103,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         exclusivelist = (GridView) getActivity().findViewById(R.id.exclusive);
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
         productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
-
+        new_arrival_progress = (ProgressBar) getActivity().findViewById(R.id.newarrival_progressbar);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         categorylistView.setHasFixedSize(true);
@@ -166,6 +169,48 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                                 request3(men_url);
                                 break;
 
+                            case "KIDS":
+                                String kid =main_url+"46";
+                                newProductDetails.clear();
+                                request3(kid);
+                                break;
+
+                            case "WATCHES":
+                                String WATCHES =main_url+"88";
+                                newProductDetails.clear();
+                                request3(WATCHES);
+                                break;
+
+                            case "SUNGLASES":
+                                String SUNGLASES =main_url+"54";
+                                newProductDetails.clear();
+                                request3(SUNGLASES);
+                                break;
+
+                            case "COSMETICS":
+                                String COSMETICS =main_url+"280";
+                                newProductDetails.clear();
+                                request3(COSMETICS);
+                                break;
+
+                            case "PERFUMES & BODY SPRAY":
+                                String PERFUMES =main_url+"84";
+                                newProductDetails.clear();
+                                request3(PERFUMES);
+                                break;
+
+                            case "WINTER COLLECTION":
+                                String WINTER =main_url+"239";
+                                newProductDetails.clear();
+                                request3(WINTER);
+                                break;
+
+                            case "LADIES BAG":
+                                String LADIES =main_url+"134";
+                                newProductDetails.clear();
+                                request3(LADIES);
+                                break;
+                            //"KIDS", "WATCHES", "SUNGLASES", "COSMETICS", "PERFUMES & BODY SPRAY","LADIES BAG", "WINTER COLLECTION"
 
                         }
                     }
@@ -298,7 +343,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     }
 
     public void request3( String api){
-
+        new_arrival_progress.setVisibility(View.VISIBLE);
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
@@ -325,11 +370,13 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                                new_arrival_progress.setVisibility(View.GONE);
                             }
 
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
+                        new_arrival_progress.setVisibility(View.GONE);
                         newProductDetailAdapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
@@ -338,6 +385,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
                 Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                new_arrival_progress.setVisibility(View.GONE);
 
             }
         }){
