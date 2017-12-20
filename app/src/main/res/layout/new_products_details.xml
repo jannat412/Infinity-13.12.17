@@ -24,7 +24,7 @@
                     android:id="@+id/product_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/punjabi_offer"/>
+                    android:src="@drawable/loading"/>
 
                 <TextView
                     android:id="@+id/product_name"

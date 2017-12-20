@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static RecyclerView.Adapter newProductDetailAdapter;
     private View v;
 
-
+    String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
@@ -117,23 +117,13 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             ));
         }
 
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        productDetailsList.setHasFixedSize(true);
-        productDetailsList.setLayoutManager(layoutManager2);
-
-        newProductDetails = new ArrayList<Product_details>();
-        newProductDetails.add(new Product_details(2,"shuvo","৳ 2000","https://opensource.org/files/osi_keyhole_300X300_90ppi_0.png"));
-        newProductDetails.add(new Product_details(4,"jannat","৳ 60000","https://qph.ec.quoracdn.net/main-thumb-t-1800-200-lOn8kKfhqfcTcKdt2GwaLfGnC0jEjHmV.jpeg"));
-
-        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
-        productDetailsList.setAdapter(newProductDetailAdapter);
-
         categorylistAdapter = new CategorylistAdapter(getActivity(), categories);
         categorylistView.setAdapter(categorylistAdapter);
         categorylistView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), categorylistView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Toast.makeText(getActivity(), ""+categories.get(position).getCategoryName(), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
+
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -160,7 +150,24 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         newarrivalList.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Toast.makeText(getActivity(), ""+newArrivals.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
+
+                        String categoryName = newArrivals.get(position).getNewArrival();
+
+                        switch (categoryName){
+                            case "WOMEN":
+                                String women_url =main_url+"34";
+                                newProductDetails.clear();
+                                request3(women_url);
+                                break;
+
+                            case "MEN":
+                                String men_url =main_url+"37";
+                                newProductDetails.clear();
+                                request3(men_url);
+                                break;
+
+
+                        }
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -216,6 +223,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             mDemoSlider.addOnPageChangeListener(this);
         }
 
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        productDetailsList.setHasFixedSize(true);
+        productDetailsList.setLayoutManager(layoutManager2);
+
+        newProductDetails = new ArrayList<Product_details>();
+        String men_product_url =main_url+"37";
+        request3(men_product_url);
+        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
+        productDetailsList.setAdapter(newProductDetailAdapter);
 
 
     }
@@ -280,6 +296,69 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+    public void request3( String api){
+
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                Product_details model = new Product_details();
+                                model.setId(obj.getInt("id"));
+                                model.setProduct_name(obj.getString("name"));
+                                model.setProduct_price(obj.getString("price"));
+                                JSONArray img = obj.getJSONArray("images");
+                                JSONObject item = img.getJSONObject(0);
+                                String image = item.getString("src");
+                                model.setProduct_image(image);
+                                // adding model to product details  array
+                                newProductDetails.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        newProductDetailAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
     @Override
     public void onStop() {
         mDemoSlider.stopAutoCycle();

@@ -27,7 +27,7 @@
                     android:id="@+id/exclusive_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/punjabi_offer"/>
+                    android:src="@drawable/loading"/>
 
                 <TextView
                     android:id="@+id/exclusive_text"

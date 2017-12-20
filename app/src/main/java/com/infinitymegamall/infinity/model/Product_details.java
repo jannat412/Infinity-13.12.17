@@ -16,8 +16,8 @@ public class Product_details {
     public Product_details(int id, String product_name, String product_price, String product_image) {
         this.id = id;
         this.product_name = product_name;
-        Product_price = product_price;
-        Product_image = product_image;
+        this.Product_price = product_price;
+        this.Product_image = product_image;
     }
 
     public int getId() {
