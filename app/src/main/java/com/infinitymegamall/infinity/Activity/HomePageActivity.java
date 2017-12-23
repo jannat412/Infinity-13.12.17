@@ -26,6 +26,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyData;
 import com.infinitymegamall.infinity.R;
@@ -58,8 +60,8 @@ public class HomePageActivity extends AppCompatActivity
 
     View v;
 
-    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=15&page=1";
-    String url ="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=20";
+    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=20&page=1";
+    String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
@@ -70,7 +72,9 @@ public class HomePageActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
         v = findViewById(R.id.home_activity_id);
 
         listView = (ListView) findViewById(R.id.navigation_list);
@@ -134,6 +138,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
         fragmentTransaction.commit();
 
+        product_detail_api_request();
 
     }
 
@@ -167,6 +172,68 @@ public class HomePageActivity extends AppCompatActivity
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
                         adapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+    public void product_detail_api_request(){
+
+        // Creating volley request obj
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(JsonRequest.Method.GET,product_url,null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, response.toString());
+                        // Parsing json
+                            try {
+                               // Snackbar.make(v,"json object",Snackbar.LENGTH_LONG).show();
+                                int id = response.getInt("id");
+                                String name = response.getString("name");
+                                String price = response.getString("price");
+
+                                JSONArray jsarray = response.getJSONArray("images");
+                                for(int i =0;i<jsarray.length();i++){
+
+                                    JSONObject imgobj = jsarray.getJSONObject(i);
+                                    String img = imgobj.getString("src");
+                                    Snackbar.make(v,id+" "+name+price+"\n"+img,Snackbar.LENGTH_SHORT).show();
+
+                                }
+                                // adding model to movies array
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                            }
+
+
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+
                     }
                 }, new Response.ErrorListener() {
             @Override

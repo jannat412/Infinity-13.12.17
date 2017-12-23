@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    int waited = 0;
+                    int waited = 1400;
                     // Splash screen pause time
                     while (waited < 1500) {
                         sleep(100);
