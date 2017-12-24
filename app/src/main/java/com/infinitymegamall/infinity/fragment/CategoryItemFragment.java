@@ -28,22 +28,17 @@ public class CategoryItemFragment extends Fragment {
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
-    String category ="";
+    int category;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            category = getArguments().getString("category");
-            Toast.makeText(getActivity(),category,
+            category = getArguments().getInt("category");
+            String b = Integer.toString(category);
+            Toast.makeText(getActivity(),b,
                     Toast.LENGTH_LONG).show();
-            switch (category) {
-                case "Cosmetics":
-                    String cos_url = main_url + "34";
-                    category_arraylist.clear();
-                    product_details_api_request(women_url);
-                    break;
-            }
+
         }
     }
 

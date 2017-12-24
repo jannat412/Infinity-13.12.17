@@ -93,10 +93,12 @@ public class HomePageActivity extends AppCompatActivity
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
                 Bundle bundle = new Bundle();
-                bundle.putString("category",categories.get(position).getCategoryName());
+                int id= categories.get(position).getId();
+                bundle.putInt("category",id);
                 categoryItemFragment = new CategoryItemFragment();
                 categoryItemFragment.setArguments(bundle);
                 fragmentManager = getSupportFragmentManager();
