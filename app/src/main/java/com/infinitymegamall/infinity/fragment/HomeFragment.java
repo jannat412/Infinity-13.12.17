@@ -322,7 +322,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"error req2",Snackbar.LENGTH_LONG).show();
 
             }
         }){

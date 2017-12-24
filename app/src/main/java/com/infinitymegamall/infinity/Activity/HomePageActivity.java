@@ -60,11 +60,10 @@ public class HomePageActivity extends AppCompatActivity
 
     View v;
 
-    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?per_page=20&page=1";
+    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0";
     String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
-
 
 
     @Override
@@ -96,7 +95,10 @@ public class HomePageActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
+                Bundle bundle = new Bundle();
+                bundle.putString("category",categories.get(position).getCategoryName());
                 categoryItemFragment = new CategoryItemFragment();
+                categoryItemFragment.setArguments(bundle);
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
@@ -178,7 +180,7 @@ public class HomePageActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"home activity error",Snackbar.LENGTH_LONG).show();
 
             }
         }){
@@ -223,7 +225,7 @@ public class HomePageActivity extends AppCompatActivity
                                     Snackbar.make(v,id+" "+name+price+"\n"+img,Snackbar.LENGTH_SHORT).show();
 
                                 }
-                                // adding model to movies array
+                                // adding model to array
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -240,7 +242,7 @@ public class HomePageActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"check your internet navigation drawer",Snackbar.LENGTH_LONG).show();
 
             }
         }){

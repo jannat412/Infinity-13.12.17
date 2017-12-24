@@ -37,10 +37,8 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.My
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.newarrival, parent, false);
+    public MyViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.newarrival, parent, false);
 
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
