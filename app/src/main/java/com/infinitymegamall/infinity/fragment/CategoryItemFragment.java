@@ -113,6 +113,7 @@ public class CategoryItemFragment extends Fragment {
                 new RecyclerItemClickListener(getActivity(), category_item_list ,new RecyclerItemClickListener.OnItemClickListener(){
                     @Override
                     public void onItemClick(View view, int position) {
+                        catfag_product_list.clear();
                         String url = String.valueOf(category_arraylist.get(position).getId());
                         String api = main_url+url;
                         product_details_api_request(api);
@@ -211,7 +212,7 @@ public class CategoryItemFragment extends Fragment {
     public void product_details_api_request(String api){
         category_fragment_progressbar.setVisibility(View.VISIBLE);
 
-        String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269";
+        String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=12";
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(a,
                 new Response.Listener<JSONArray>() {

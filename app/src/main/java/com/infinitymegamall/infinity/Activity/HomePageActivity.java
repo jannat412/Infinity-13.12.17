@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +48,7 @@ import java.util.Map;
 import static com.android.volley.VolleyLog.TAG;
 
 public class HomePageActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,SwipeRefreshLayout.OnRefreshListener {
 
     private static ListView listView;
     private static ArrayList<nv_category> categories;
@@ -57,6 +58,7 @@ public class HomePageActivity extends AppCompatActivity
     public FragmentManager fragmentManager;
     private HomeFragment homeFragment;
     private CategoryItemFragment categoryItemFragment;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     View v;
 
@@ -77,6 +79,18 @@ public class HomePageActivity extends AppCompatActivity
         v = findViewById(R.id.home_activity_id);
 
         listView = (ListView) findViewById(R.id.navigation_list);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        categories.clear();
+                        categories_api_request();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+        );
 
         categories = new ArrayList<nv_category>();
 
@@ -313,5 +327,8 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onRefresh() {
 
+    }
 }

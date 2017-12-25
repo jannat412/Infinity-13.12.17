@@ -9,6 +9,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.infinitymegamall.infinity.Activity.HomePageActivity"
     tools:showIn="@layout/app_bar_home_page">
+
+
     <FrameLayout
         android:orientation="vertical"
         android:id="@+id/child_fragment_container"

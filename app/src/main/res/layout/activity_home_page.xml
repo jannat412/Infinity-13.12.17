@@ -10,7 +10,6 @@
     tools:openDrawer="start"
     >
 
-
         <include
             layout="@layout/app_bar_home_page"
             android:layout_width="match_parent"
@@ -31,5 +30,6 @@
                 <include layout="@layout/nav_header_home_page"/>
             </LinearLayout>
         </android.support.design.widget.NavigationView>
+
     </android.support.v4.widget.DrawerLayout>
 
