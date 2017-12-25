@@ -4,6 +4,13 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        android:text="|"/>
 
     <TextView
         android:id="@+id/category_item_name_categorylist"
@@ -11,10 +18,16 @@
         android:layout_height="wrap_content"
         android:text="MEN"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="2dp"
         android:textColor="#000"
         android:textStyle="bold"
-        android:paddingLeft="8dp"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="2dp"
+        android:text="|"/>
 
 </LinearLayout>
