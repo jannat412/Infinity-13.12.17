@@ -40,7 +40,6 @@ import com.infinitymegamall.infinity.model.Exclusive;
 import com.infinitymegamall.infinity.model.HomeCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.Product_details;
-import com.infinitymegamall.infinity.model.nv_category;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,7 +75,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private ProgressBar new_arrival_progress;
 
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
-    String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
+    String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
@@ -136,6 +135,19 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                     }
                 })
         );
+
+        request2();
+
+        exclusivelistAdapter = new ExclusivelistAdapter(getActivity(),exclusives);
+        exclusivelist.setAdapter(exclusivelistAdapter);
+
+        exclusivelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
+                Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -222,19 +234,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                     }
                 })
         );
-
-        request2();
-
-        exclusivelistAdapter = new ExclusivelistAdapter(getActivity(),exclusives);
-        exclusivelist.setAdapter(exclusivelistAdapter);
-
-        exclusivelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
-                Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
         url_maps.put("Hannibal", "http://static2.hypable.com/wp-content/uploads/2013/12/hannibal-season-2-release-date.jpg");

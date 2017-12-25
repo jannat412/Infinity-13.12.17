@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -100,6 +102,12 @@ public class CategoryItemFragment extends Fragment {
 
         category_item_list.setHasFixedSize(true);
         category_item_list.setLayoutManager(layoutManager1);
+
+//        int numberOfColumns = 2;
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), numberOfColumns);
+//        category_item_list.setLayoutManager(gridLayoutManager);
+//        category_item_list.setHasFixedSize(true);
+//        category_item_list.setItemAnimator(new DefaultItemAnimator());
 
         category_arraylist = new ArrayList<>();
         category_arraylist.add(new nv_category("shuvo prosad", 0));
@@ -212,7 +220,7 @@ public class CategoryItemFragment extends Fragment {
     public void product_details_api_request(String api){
         category_fragment_progressbar.setVisibility(View.VISIBLE);
 
-        String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=12";
+        String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16";
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(a,
                 new Response.Listener<JSONArray>() {
