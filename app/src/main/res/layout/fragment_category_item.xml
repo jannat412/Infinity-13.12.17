@@ -37,8 +37,8 @@
             <GridView
                 android:layout_width="wrap_content"
                 android:layout_height="840dp"
-                android:id="@+id/category_gridview"
-                android:numColumns="2"></GridView>
+                android:id="@+id/category_frag_gridview"
+                android:numColumns="3"></GridView>
         </LinearLayout>
 
     </LinearLayout>

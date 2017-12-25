@@ -142,7 +142,6 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
         fragmentTransaction.commit();
 
-        product_detail_api_request();
 
     }
 

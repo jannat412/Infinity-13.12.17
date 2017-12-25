@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static RecyclerView.Adapter categorylistAdapter;
 
     private GridView exclusivelist;
-    private List<Exclusive> exclusives = new ArrayList<Exclusive>();
+    private List<Exclusive> exclusives = new ArrayList<>();
     private ExclusivelistAdapter exclusivelistAdapter;
 
     private RecyclerView newarrivalList;
