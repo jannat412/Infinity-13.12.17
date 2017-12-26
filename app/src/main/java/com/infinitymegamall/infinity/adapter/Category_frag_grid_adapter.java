@@ -2,6 +2,7 @@ package com.infinitymegamall.infinity.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,31 +16,58 @@ import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Exclusive;
 import com.infinitymegamall.infinity.model.Product_details;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by shuvo on 25-Dec-17.
  */
 
-public class Category_frag_grid_adapter extends BaseAdapter {
-    private Activity activity;
-    private LayoutInflater inflater;
+public class Category_frag_grid_adapter extends RecyclerView.Adapter<Category_frag_grid_adapter.MyViewHolder> {
+    private Context c;
     ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
-    private List<Product_details> productDetailsList;
+    private ArrayList<Product_details> productDetailsList;
 
-    public Category_frag_grid_adapter(Activity activity, List<Product_details> productDetailsList) {
-        this.activity = activity;
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView name_tv;
+        TextView price_tv;
+        NetworkImageView image_niv;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            this.name_tv = (TextView)itemView.findViewById(R.id.product_name);
+            this.price_tv = (TextView) itemView.findViewById(R.id.product_price);
+            this.image_niv = (NetworkImageView) itemView.findViewById(R.id.product_image);
+        }
+    }
+
+    public Category_frag_grid_adapter(Context c, ArrayList<Product_details> productDetailsList) {
+        this.c = c;
         this.productDetailsList = productDetailsList;
     }
 
+
     @Override
-    public int getCount() {
-        return productDetailsList.size();
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.new_products_details, parent, false);
+
+        Category_frag_grid_adapter.MyViewHolder myViewHolder = new Category_frag_grid_adapter.MyViewHolder(view);
+        return myViewHolder;
     }
 
     @Override
-    public Object getItem(int position) {
-        return productDetailsList.get(position);
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        TextView name_tvbh = holder.name_tv;
+        TextView price_tvbh = holder.price_tv;
+        NetworkImageView image_nivbh = holder.image_niv;
+
+        name_tvbh.setText(productDetailsList.get(position).getProduct_name());
+        price_tvbh.setText(productDetailsList.get(position).getProduct_price());
+        image_nivbh.setImageUrl(productDetailsList.get(position).getProduct_image(),imageLoader);
     }
 
     @Override
@@ -48,26 +76,8 @@ public class Category_frag_grid_adapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.new_products_details, null);
-
-        if (imageLoader == null)
-            imageLoader = Server_request.getInstance().getImageLoader();
-
-        TextView name_tv= (TextView) convertView.findViewById(R.id.product_name);
-        TextView price_tv= (TextView) convertView.findViewById(R.id.product_price);
-        NetworkImageView image_niv = (NetworkImageView) convertView.findViewById(R.id.product_image);
-
-        Product_details s=productDetailsList.get(position);
-
-        name_tv.setText(s.getProduct_name());
-        price_tv.setText(s.getProduct_price());
-        image_niv.setImageUrl(s.getProduct_image(), imageLoader);
-
-        return convertView;
+    public int getItemCount() {
+        return productDetailsList.size();
     }
+
 }

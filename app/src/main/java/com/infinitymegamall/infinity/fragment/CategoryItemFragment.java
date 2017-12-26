@@ -53,14 +53,20 @@ public class CategoryItemFragment extends Fragment {
     private static ArrayList<nv_category> category_arraylist;
     private static RecyclerView.Adapter category_adapter;
 
-    private GridView catfag_product_grid;
-    private List<Product_details> catfag_product_list = new ArrayList<>();
-    private Category_frag_grid_adapter catfag_grid_adapter;
+    private RecyclerView catfag_product_grid;
+    private static ArrayList<Product_details> catfag_product_list;
+    private static RecyclerView.Adapter catfag_grid_adapter;
 
     private View v;
     private ProgressBar category_fragment_progressbar;
 
+    private int visibleThreshold = 9;
+    private int lastVisibleItem, totalItemCount;
+    private boolean loading;
+
+    String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16";
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
+    String products_pagination_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16&page=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
@@ -113,7 +119,6 @@ public class CategoryItemFragment extends Fragment {
         category_arraylist.add(new nv_category("shuvo prosad", 0));
         String c = String.valueOf(category);
         subcategories_api_request(c);
-
         category_adapter = new CategoryPageCategoryItemAdapter(getActivity(), category_arraylist);
         category_item_list.setAdapter(category_adapter);
 
@@ -124,7 +129,7 @@ public class CategoryItemFragment extends Fragment {
                         catfag_product_list.clear();
                         String url = String.valueOf(category_arraylist.get(position).getId());
                         String api = main_url+url;
-                        product_details_api_request(api);
+                        product_details_api_request(a);
                     }
 
                     @Override
@@ -133,22 +138,52 @@ public class CategoryItemFragment extends Fragment {
                     }
                 } ));
 
-        catfag_product_grid = (GridView) getActivity().findViewById(R.id.category_frag_gridview);
-        catfag_grid_adapter  = new Category_frag_grid_adapter(getActivity(),catfag_product_list);
-
+        catfag_product_list = new ArrayList<>();
         Product_details obj =new Product_details();
         obj.setProduct_image("https://thumbs.dreamstime.com/t/imge-mint-closeup-green-leaves-texture-background-72159554.jpg");
         obj.setId(0);
         obj.setProduct_price("1200");
         obj.setProduct_name("Jannat");
         catfag_product_list.add(obj);
+        catfag_product_grid = (RecyclerView) getActivity().findViewById(R.id.category_frag_gridview);
+        catfag_grid_adapter  = new Category_frag_grid_adapter(getActivity(),catfag_product_list);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        catfag_product_grid.setLayoutManager(gridLayoutManager);
+        catfag_product_grid.setHasFixedSize(true);
+        catfag_product_grid.setItemAnimator(new DefaultItemAnimator());
         catfag_product_grid.setAdapter(catfag_grid_adapter);
 
-        catfag_product_grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
-                Toast.makeText(getActivity(), ""+catfag_product_list.get(exPosition).getProduct_name(), Toast.LENGTH_SHORT).show();
+        catfag_product_grid.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), catfag_product_grid ,new RecyclerItemClickListener.OnItemClickListener(){
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String s= catfag_product_list.get(position).getProduct_image();
+                        Snackbar.make(v,s,Snackbar.LENGTH_LONG).show();
+                    }
 
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+                } ));
+
+        catfag_product_grid.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+               // Snackbar.make(v," grid scroll",Snackbar.LENGTH_LONG).show();
+
+                totalItemCount = gridLayoutManager.getItemCount();
+                lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+                if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                    // End has been reached
+                    // Do something
+                    Snackbar.make(v," condition grid scroll",Snackbar.LENGTH_LONG).show();
+
+                    String a = products_pagination_url+2;
+                    product_details_api_request(a);
+                    //loading = true;
+                }
             }
         });
     }
@@ -220,9 +255,8 @@ public class CategoryItemFragment extends Fragment {
     public void product_details_api_request(String api){
         category_fragment_progressbar.setVisibility(View.VISIBLE);
 
-        String a ="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16";
         // Creating volley request obj
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest(a,
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -242,7 +276,7 @@ public class CategoryItemFragment extends Fragment {
                                 String image = item.getString("src");
                                 model.setProduct_image(image);
                                 // adding model to product details  array
-                                Snackbar.make(v,"grid  "+model.getId(),Snackbar.LENGTH_SHORT).show();
+                                //Snackbar.make(v,"grid  "+model.getId(),Snackbar.LENGTH_SHORT).show();
                                 catfag_product_list.add(model);
 
                             } catch (JSONException e) {
