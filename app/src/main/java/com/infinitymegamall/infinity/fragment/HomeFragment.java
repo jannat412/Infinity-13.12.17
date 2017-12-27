@@ -67,12 +67,16 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static ArrayList<NewArrival> newArrivals;
     private static RecyclerView.Adapter newArrivalAdapter;
 
+    private RecyclerView bestsellerList;
+    private RecyclerView BestsellerDetailList;
+
     private RecyclerView productDetailsList;
     private static ArrayList<Product_details> newProductDetails;
     private static RecyclerView.Adapter newProductDetailAdapter;
     private View v;
 
     private ProgressBar new_arrival_progress;
+    private ProgressBar bestseller_progressbar;
 
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
@@ -104,6 +108,10 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
         productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
         new_arrival_progress = (ProgressBar) getActivity().findViewById(R.id.newarrival_progressbar);
+
+        bestsellerList = (RecyclerView) getActivity().findViewById(R.id.bestsellerList);
+//        BestsellerDetailList = (RecyclerView) getActivity().findViewById(R.id.bestsellerDetailList);
+//        bestseller_progressbar = (ProgressBar) getActivity().findViewById(R.id.bestseller_progressbar);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         categorylistView.setHasFixedSize(true);
@@ -148,6 +156,23 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
             }
         });
+
+
+        //bestseller
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        bestsellerList.setHasFixedSize(true);
+        bestsellerList.setLayoutManager(layoutManager3);
+
+        newArrivals = new ArrayList<NewArrival>();
+        for(int i = 0; i< MyNewArival.newarrival.length; i++){
+            newArrivals.add(new NewArrival(
+                    MyNewArival.newarrival[i],
+                    MyNewArival.id[i]
+            ));
+        }
+        newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
+        bestsellerList.setAdapter(newArrivalAdapter);
+
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -278,6 +303,16 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         product_details_api_request(men_product_url);
         newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
         productDetailsList.setAdapter(newProductDetailAdapter);
+
+//        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+//        BestsellerDetailList.setHasFixedSize(true);
+//        BestsellerDetailList.setLayoutManager(layoutManager4);
+//
+//        newProductDetails = new ArrayList<Product_details>();
+//        String men_product_url2 =main_url+"37";
+//        product_details_api_request(men_product_url2);
+//        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
+//        BestsellerDetailList.setAdapter(newProductDetailAdapter);
 
 
     }

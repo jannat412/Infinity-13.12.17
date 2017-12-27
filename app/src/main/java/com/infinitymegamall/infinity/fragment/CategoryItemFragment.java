@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.infinitymegamall.infinity.Activity.HomePageActivity;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
@@ -48,6 +53,9 @@ import static com.android.volley.VolleyLog.TAG;
 
 
 public class CategoryItemFragment extends Fragment {
+
+    FragmentTransaction transaction;
+    private ProductDetailViewFragment productDetailViewFragment;
 
     private RecyclerView category_item_list;
     private static ArrayList<nv_category> category_arraylist;
@@ -159,6 +167,13 @@ public class CategoryItemFragment extends Fragment {
                     public void onItemClick(View view, int position) {
                         String s= catfag_product_list.get(position).getProduct_image();
                         Snackbar.make(v,s,Snackbar.LENGTH_LONG).show();
+
+                        productDetailViewFragment = new ProductDetailViewFragment();
+                        transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                        transaction.addToBackStack("ProductDetailViewFragment");
+                        transaction.commit();
+
                     }
 
                     @Override
