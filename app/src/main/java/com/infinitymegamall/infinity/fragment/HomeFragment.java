@@ -178,8 +178,17 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         exclusivelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
-                Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
+                //Snackbar.make(v,exclusives.get(exPosition).getExclusiveText(),Snackbar.LENGTH_LONG).show();
+                int productId = exclusives.get(exPosition).getId();
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId",productId);
+                productDetailViewFragment = new ProductDetailViewFragment();
+                productDetailViewFragment.setArguments(bundle);
+                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                transaction.addToBackStack("ProductDetailViewFragment");
+                transaction.commit();
             }
         });
 
@@ -278,8 +287,11 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 new RecyclerItemClickListener(getActivity(), productDetailsList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         Snackbar.make(v,newProductDetails.get(position).getProduct_image(),Snackbar.LENGTH_LONG).show();
-
+                        int productId = newProductDetails.get(position).getId();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("productId",productId);
                         productDetailViewFragment = new ProductDetailViewFragment();
+                        productDetailViewFragment.setArguments(bundle);
                         transaction = getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
                         transaction.addToBackStack("ProductDetailViewFragment");
@@ -302,7 +314,27 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         product_details_api_request2(men_product_url2);
         bestSellerProductDetailsAdapter  = new Product_details_adapter(getActivity(),bestSellerProductDetailsArrayList);
         bestsellerDetailList.setAdapter(bestSellerProductDetailsAdapter);
+        bestsellerDetailList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), bestsellerDetailList, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Snackbar.make(v,bestSellerProductDetailsArrayList.get(position).getProduct_name(),Snackbar.LENGTH_LONG).show();
+                int productId = bestSellerProductDetailsArrayList.get(position).getId();
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId",productId);
+                productDetailViewFragment = new ProductDetailViewFragment();
+                productDetailViewFragment.setArguments(bundle);
+                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                transaction.addToBackStack("ProductDetailViewFragment");
+                transaction.commit();
 
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
         YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.youtube_layout, youTubePlayerFragment).commit();

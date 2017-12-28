@@ -183,8 +183,11 @@ public class CategoryItemFragment extends Fragment {
                     public void onItemClick(View view, int position) {
                         String s= catfag_product_list.get(position).getProduct_image();
                         Snackbar.make(v,s,Snackbar.LENGTH_LONG).show();
-
+                        int productId = catfag_product_list.get(position).getId();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("productId",productId);
                         productDetailViewFragment = new ProductDetailViewFragment();
+                        productDetailViewFragment.setArguments(bundle);
                         transaction = getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
                         transaction.addToBackStack("ProductDetailViewFragment");

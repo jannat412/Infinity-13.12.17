@@ -5,10 +5,10 @@ package com.infinitymegamall.infinity.model;
  */
 
 public class Gallery {
-    int  galleryImage;
+    String  galleryImage;
     int id;
 
-    public Gallery(int galleryImage, int id) {
+    public Gallery(String galleryImage, int id) {
         this.galleryImage = galleryImage;
         this.id = id;
     }
@@ -16,11 +16,11 @@ public class Gallery {
     public Gallery() {
     }
 
-    public int getGalleryImage() {
+    public String  getGalleryImage() {
         return galleryImage;
     }
 
-    public void setGalleryImage(int galleryImage) {
+    public void setGalleryImage(String galleryImage) {
         this.galleryImage = galleryImage;
     }
 

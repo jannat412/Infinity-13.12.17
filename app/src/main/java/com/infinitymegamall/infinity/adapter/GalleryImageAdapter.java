@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Gallery;
 import com.infinitymegamall.infinity.model.NewArrival;
@@ -48,9 +49,13 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     @Override
     public void onBindViewHolder(final GalleryImageAdapter.MyViewHolder holder, final int listPosition) {
 
-        ImageView galleryImage  = holder.galleryImage;
-
-        galleryImage.setImageResource(galleries.get(listPosition).getGalleryImage());
+        Glide
+                .with(c)
+                .load(galleries.get(listPosition).getGalleryImage())
+                .centerCrop()
+                .placeholder(R.drawable.loading)
+                .crossFade()
+                .into(holder.galleryImage);
 
     }
 
