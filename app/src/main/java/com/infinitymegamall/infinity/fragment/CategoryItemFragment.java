@@ -25,9 +25,13 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.infinitymegamall.infinity.Activity.HomePageActivity;
 import com.infinitymegamall.infinity.Connection.Server_request;
@@ -44,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -126,7 +131,7 @@ public class CategoryItemFragment extends Fragment {
 //        category_item_list.setItemAnimator(new DefaultItemAnimator());
 
         category_arraylist = new ArrayList<>();
-        category_arraylist.add(new nv_category("all", 0));
+        category_arraylist.add(new nv_category("All", 0));
         subcategories_api_request(category_id);
         category_adapter = new CategoryPageCategoryItemAdapter(getActivity(), category_arraylist);
         category_item_list.setAdapter(category_adapter);
@@ -139,7 +144,7 @@ public class CategoryItemFragment extends Fragment {
                         String sub_cat_id = category_arraylist.get(position).getCategoryName();
                         Snackbar.make(v,sub_cat_id,Snackbar.LENGTH_LONG).show();
                         //Snackbar.make(v,category_id,Snackbar.LENGTH_LONG).show();
-                        if(sub_cat_id=="all"){
+                        if(sub_cat_id=="All"){
                             //catfag_product_list.clear();
                             product_details_api_request(category_id);
                         }
@@ -274,8 +279,41 @@ public class CategoryItemFragment extends Fragment {
                 headers.put("Authorization", auth);
                 return headers;
             }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
         };
-
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -341,6 +379,40 @@ public class CategoryItemFragment extends Fragment {
                 headers.put("Content-Type", "application/json");
                 headers.put("Authorization", auth);
                 return headers;
+            }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
             }
         };
 

@@ -22,10 +22,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
@@ -41,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -210,67 +215,39 @@ public class HomePageActivity extends AppCompatActivity
                 headers.put("Authorization", auth);
                 return headers;
             }
-        };
-
-        // Adding request to request queue
-        Server_request.getInstance().addToRequestQueue(jsObjRequest);
-
-    }
-
-    public void product_detail_api_request(){
-
-        // Creating volley request obj
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(JsonRequest.Method.GET,product_url,null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, response.toString());
-                        // Parsing json
-                            try {
-                               // Snackbar.make(v,"json object",Snackbar.LENGTH_LONG).show();
-                                int id = response.getInt("id");
-                                String name = response.getString("name");
-                                String price = response.getString("price");
-
-                                JSONArray jsarray = response.getJSONArray("images");
-                                for(int i =0;i<jsarray.length();i++){
-
-                                    JSONObject imgobj = jsarray.getJSONObject(i);
-                                    String img = imgobj.getString("src");
-                                    Snackbar.make(v,id+" "+name+price+"\n"+img,Snackbar.LENGTH_SHORT).show();
-
-                                }
-                                // adding model to array
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
-                            }
-
-
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-
-                    }
-                }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-
-                Snackbar.make(v,"check your internet navigation drawer",Snackbar.LENGTH_LONG).show();
-
-            }
-        }){
-
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                String credentials = username+":"+ password;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", auth);
-                return headers;
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
             }
         };
 

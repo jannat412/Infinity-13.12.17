@@ -24,7 +24,7 @@
                 android:layout_height="200dp"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal">
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/exclusive_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

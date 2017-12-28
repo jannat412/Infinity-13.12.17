@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Exclusive;
@@ -26,7 +27,7 @@ import java.util.List;
 public class ExclusivelistAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
-    ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
+//    ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
     private List<Exclusive> exclusives;
 
     public ExclusivelistAdapter( Activity activity,List<Exclusive> exclusive) {
@@ -53,17 +54,24 @@ public class ExclusivelistAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.exclusive_list, null);
 
-        if (imageLoader == null)
-            imageLoader = Server_request.getInstance().getImageLoader();
+//        if (imageLoader == null)
+//            imageLoader = Server_request.getInstance().getImageLoader();
 
             TextView exclusiveText= (TextView) convertView.findViewById(R.id.exclusive_text);
-            NetworkImageView exclusiveImage = (NetworkImageView) convertView.findViewById(R.id.exclusive_image);
+            ImageView exclusiveImage = (ImageView) convertView.findViewById(R.id.exclusive_image);
 
             Exclusive s=exclusives.get(position);
 
             exclusiveText.setText(s.getExclusiveText());
 
-            exclusiveImage.setImageUrl(s.getImage(), imageLoader);
+            //exclusiveImage.setImageUrl(s.getImage(), imageLoader);
+        Glide
+                .with(activity)
+                .load(s.getImage())
+                .centerCrop()
+                .placeholder(R.drawable.loading)
+                .crossFade()
+                .into(exclusiveImage);
 
         return convertView;
     }

@@ -5,10 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Product_details;
@@ -23,7 +25,7 @@ public class Product_details_adapter extends RecyclerView.Adapter<Product_detail
 
     private ArrayList<Product_details> product_details;
     Context c;
-    ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
+//    ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -31,13 +33,13 @@ public class Product_details_adapter extends RecyclerView.Adapter<Product_detail
 
         TextView textViewProductName;
         TextView textViewProductPrice;
-        NetworkImageView networkImageViewProductImage;
+        ImageView ImageViewProductImage;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewProductName = (TextView) itemView.findViewById(R.id.product_name);
             this.textViewProductPrice = (TextView) itemView.findViewById(R.id.product_price);
-            this.networkImageViewProductImage=(NetworkImageView) itemView.findViewById(R.id.product_image);
+            this.ImageViewProductImage=(ImageView) itemView.findViewById(R.id.product_image);
         }
     }
 
@@ -58,16 +60,23 @@ public class Product_details_adapter extends RecyclerView.Adapter<Product_detail
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        if (imageLoader == null)
-            imageLoader = Server_request.getInstance().getImageLoader();
+//        if (imageLoader == null)
+//            imageLoader = Server_request.getInstance().getImageLoader();
 
         TextView textViewProductName = holder.textViewProductName;
         TextView textViewProductPrice= holder.textViewProductPrice;
-        NetworkImageView networkImageViewProductImage = holder.networkImageViewProductImage;
+//        ImageView ImageViewProductImage = holder.ImageViewProductImage;
 
         textViewProductName.setText(product_details.get(position).getProduct_name());
-        textViewProductPrice.setText(product_details.get(position).getProduct_price());
-        networkImageViewProductImage.setImageUrl(product_details.get(position).getProduct_image(), imageLoader);
+        textViewProductPrice.setText("৳ "+product_details.get(position).getProduct_price());
+        //ImageViewProductImage.setImageUrl(product_details.get(position).getProduct_image(), imageLoader);
+        Glide
+                .with(c)
+                .load(product_details.get(position).getProduct_image())
+                .centerCrop()
+                .placeholder(R.drawable.loading)
+                .crossFade()
+                .into(holder.ImageViewProductImage);
     }
     @Override
     public int getItemCount() {

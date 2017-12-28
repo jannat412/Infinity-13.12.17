@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.model.Exclusive;
@@ -26,7 +28,7 @@ import java.util.List;
 
 public class Category_frag_grid_adapter extends RecyclerView.Adapter<Category_frag_grid_adapter.MyViewHolder> {
     private Context c;
-    ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
+    //ImageLoader imageLoader = Server_request.getInstance().getImageLoader();
     private ArrayList<Product_details> productDetailsList;
 
 
@@ -34,13 +36,13 @@ public class Category_frag_grid_adapter extends RecyclerView.Adapter<Category_fr
 
         TextView name_tv;
         TextView price_tv;
-        NetworkImageView image_niv;
+        ImageView image_niv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.name_tv = (TextView)itemView.findViewById(R.id.product_name);
             this.price_tv = (TextView) itemView.findViewById(R.id.product_price);
-            this.image_niv = (NetworkImageView) itemView.findViewById(R.id.product_image);
+            this.image_niv = (ImageView) itemView.findViewById(R.id.product_image);
         }
     }
 
@@ -61,13 +63,25 @@ public class Category_frag_grid_adapter extends RecyclerView.Adapter<Category_fr
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+
+//        if (imageLoader == null)
+//            imageLoader = Server_request.getInstance().getImageLoader();
+
         TextView name_tvbh = holder.name_tv;
         TextView price_tvbh = holder.price_tv;
-        NetworkImageView image_nivbh = holder.image_niv;
+//        ImageView image_nivbh = holder.image_niv;
 
         name_tvbh.setText(productDetailsList.get(position).getProduct_name());
-        price_tvbh.setText(productDetailsList.get(position).getProduct_price());
-        image_nivbh.setImageUrl(productDetailsList.get(position).getProduct_image(),imageLoader);
+        price_tvbh.setText("৳ "+productDetailsList.get(position).getProduct_price());
+        //image_nivbh.setImageUrl(productDetailsList.get(position).getProduct_image(),imageLoader);
+
+        Glide
+                .with(c)
+                .load(productDetailsList.get(position).getProduct_image())
+                .centerCrop()
+                .placeholder(R.drawable.loading)
+                .crossFade()
+                .into(holder.image_niv);
     }
 
     @Override

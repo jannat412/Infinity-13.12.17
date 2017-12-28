@@ -13,6 +13,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="50dp"
         android:layout_height="match_parent">
         <android.support.v4.widget.SwipeRefreshLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,8 +24,7 @@
             android:id="@+id/navigation_list"
             android:background="#c8eae0e0"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+            android:layout_height="match_parent">
         </ListView>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>

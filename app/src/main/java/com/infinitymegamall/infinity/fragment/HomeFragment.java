@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -17,15 +18,26 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayer.OnInitializedListener;
+import com.google.android.youtube.player.YouTubePlayer.Provider;
+
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.infinitymegamall.infinity.Activity.HomePageActivity;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyCategory;
@@ -45,6 +57,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +66,9 @@ import java.util.Map;
 import static com.android.volley.VolleyLog.TAG;
 
 public class HomeFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener{
+
+    FragmentTransaction transaction;
+    private ProductDetailViewFragment productDetailViewFragment;
 
     private SliderLayout mDemoSlider;
     private RecyclerView categorylistView;
@@ -83,6 +99,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
+    public static final String API_KEY = "AIzaSyDkadPHN-zCcuIGermsAlpwpMXhurR8BVk";
+    private static String VIDEO_ID = "sBGiyjOrRIs";
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -108,6 +127,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
         productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
         new_arrival_progress = (ProgressBar) getActivity().findViewById(R.id.newarrival_progressbar);
+
+        request2();
 
         bestsellerList = (RecyclerView) getActivity().findViewById(R.id.bestsellerList);
 //        BestsellerDetailList = (RecyclerView) getActivity().findViewById(R.id.bestsellerDetailList);
@@ -144,8 +165,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 })
         );
 
-        request2();
-
         exclusivelistAdapter = new ExclusivelistAdapter(getActivity(),exclusives);
         exclusivelist.setAdapter(exclusivelistAdapter);
 
@@ -172,7 +191,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         }
         newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
         bestsellerList.setAdapter(newArrivalAdapter);
-
+//*************
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -192,7 +211,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         newarrivalList.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-
                         String categoryName = newArrivals.get(position).getNewArrival();
 
                         switch (categoryName){
@@ -261,16 +279,16 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         );
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
-        url_maps.put("Hannibal", "http://static2.hypable.com/wp-content/uploads/2013/12/hannibal-season-2-release-date.jpg");
-        url_maps.put("Big Bang Theory", "http://tvfiles.alphacoders.com/100/hdclearart-10.png");
-        url_maps.put("House of Cards", "http://cdn3.nflximg.net/images/3093/2043093.jpg");
-        url_maps.put("Game of Thrones", "http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
+        url_maps.put("Welcome to Infinity", "http://static2.hypable.com/wp-content/uploads/2013/12/hannibal-season-2-release-date.jpg");
+        url_maps.put("Welcome to Infinity", "http://tvfiles.alphacoders.com/100/hdclearart-10.png");
+        url_maps.put("Welcome to Infinity", "http://cdn3.nflximg.net/images/3093/2043093.jpg");
+        url_maps.put("Welcome to Infinity", "http://images.boomsbeat.com/data/images/full/19640/game-of-thrones-season-4-jpg.jpg");
 
         HashMap<String,Integer> file_maps = new HashMap<String, Integer>();
-        file_maps.put("Hannibal",R.drawable.slider1);
-        file_maps.put("Big Bang Theory",R.drawable.slider2);
-        file_maps.put("House of Cards",R.drawable.slider3);
-        file_maps.put("Game of Thrones", R.drawable.slider4);
+        file_maps.put("Welcome to Infinity",R.drawable.slider1);
+        file_maps.put("Welcome to Infinity",R.drawable.slider2);
+        file_maps.put("Welcome to Infinity",R.drawable.slider3);
+        file_maps.put("Welcome to Infinity", R.drawable.slider4);
 
         for(String name : file_maps.keySet()){
             TextSliderView textSliderView = new TextSliderView(getActivity());
@@ -303,6 +321,24 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         product_details_api_request(men_product_url);
         newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
         productDetailsList.setAdapter(newProductDetailAdapter);
+        productDetailsList.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), productDetailsList ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Snackbar.make(v,newProductDetails.get(position).getProduct_image(),Snackbar.LENGTH_LONG).show();
+
+                        productDetailViewFragment = new ProductDetailViewFragment();
+                        transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                        transaction.addToBackStack("ProductDetailViewFragment");
+                        transaction.commit();
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
 //        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 //        BestsellerDetailList.setHasFixedSize(true);
@@ -314,6 +350,28 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 //        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
 //        BestsellerDetailList.setAdapter(newProductDetailAdapter);
 
+        YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.youtube_layout, youTubePlayerFragment).commit();
+        youTubePlayerFragment.initialize(API_KEY, new OnInitializedListener() {
+
+            @Override
+            public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
+                if (!wasRestored) {
+                    player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                    player.loadVideo(VIDEO_ID);
+                    player.play();
+                }
+            }
+
+            @Override
+            public void onInitializationFailure(Provider provider, YouTubeInitializationResult error) {
+                // YouTube error
+                String errorMessage = error.toString();
+                Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
+                Log.d("errorMessage:", errorMessage);
+            }
+        });
 
     }
 
@@ -370,6 +428,40 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 headers.put("Content-Type", "application/json");
                 headers.put("Authorization", auth);
                 return headers;
+            }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
             }
         };
 
@@ -436,6 +528,40 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 headers.put("Authorization", auth);
                 return headers;
             }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
         };
 
         // Adding request to request queue
@@ -443,12 +569,12 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     }
 
-
     @Override
     public void onStop() {
         mDemoSlider.stopAutoCycle();
         super.onStop();
     }
+
     @Override
     public void onSliderClick(BaseSliderView slider) {
         Toast.makeText(getActivity(), slider.getBundle().get("extra")+ "", Toast.LENGTH_SHORT).show();
