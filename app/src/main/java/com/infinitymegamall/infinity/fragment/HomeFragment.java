@@ -41,9 +41,9 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.infinitymegamall.infinity.Activity.HomePageActivity;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyCategory;
-import com.infinitymegamall.infinity.MyNewArival;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
+import com.infinitymegamall.infinity.adapter.BestSellerCategoryAdapter;
 import com.infinitymegamall.infinity.adapter.CategorylistAdapter;
 import com.infinitymegamall.infinity.adapter.ExclusivelistAdapter;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
@@ -84,7 +84,11 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static RecyclerView.Adapter newArrivalAdapter;
 
     private RecyclerView bestsellerList;
-    private RecyclerView BestsellerDetailList;
+    private RecyclerView bestsellerDetailList;
+    private RecyclerView.Adapter bestSellerCategoryAdapter;
+    private RecyclerView.Adapter bestSellerProductDetailsAdapter;
+    private ArrayList<NewArrival> bestSellerCategoryArraylist;
+    private ArrayList<Product_details> bestSellerProductDetailsArrayList;
 
     private RecyclerView productDetailsList;
     private static ArrayList<Product_details> newProductDetails;
@@ -95,9 +99,12 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private ProgressBar bestseller_progressbar;
 
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
+    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=1800&category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
+    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0&per_page=10";
+
 
     public static final String API_KEY = "AIzaSyDkadPHN-zCcuIGermsAlpwpMXhurR8BVk";
     private static String VIDEO_ID = "sBGiyjOrRIs";
@@ -123,7 +130,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         HomePageActivity homePageActivity = (HomePageActivity) getActivity();
         mDemoSlider = (SliderLayout)getActivity().findViewById(R.id.slider);
         categorylistView = (RecyclerView) getActivity().findViewById(R.id.category_list);
-        exclusivelist = (GridView) getActivity().findViewById(R.id.exclusive);
+        exclusivelist = (GridView ) getActivity().findViewById(R.id.exclusive);
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
         productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
         new_arrival_progress = (ProgressBar) getActivity().findViewById(R.id.newarrival_progressbar);
@@ -131,14 +138,14 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         request2();
 
         bestsellerList = (RecyclerView) getActivity().findViewById(R.id.bestsellerList);
-//        BestsellerDetailList = (RecyclerView) getActivity().findViewById(R.id.bestsellerDetailList);
-//        bestseller_progressbar = (ProgressBar) getActivity().findViewById(R.id.bestseller_progressbar);
+        bestsellerDetailList = (RecyclerView) getActivity().findViewById(R.id.bestsellerDetailList);
+        bestseller_progressbar = (ProgressBar) getActivity().findViewById(R.id.bestseller_progressbar);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         categorylistView.setHasFixedSize(true);
         categorylistView.setLayoutManager(layoutManager);
 
-
+        //circle categories under the slider
         categories = new ArrayList<HomeCategory>();
         for (int i = 0; i < MyCategory.category.length; i++) {
             categories.add(new HomeCategory(
@@ -176,100 +183,42 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             }
         });
 
-
-        //bestseller
+//bestseller
         LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         bestsellerList.setHasFixedSize(true);
         bestsellerList.setLayoutManager(layoutManager3);
+        bestSellerCategoryArraylist = new ArrayList<>();
+        bestSellerCategoryAdapter = new BestSellerCategoryAdapter(getActivity(), bestSellerCategoryArraylist);
+        bestsellerList.setAdapter(bestSellerCategoryAdapter);
+        bestsellerList.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), bestsellerList, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String men_product_url =main_url2+String.valueOf(newArrivals.get(position).getId());;
+                        product_details_api_request2(men_product_url);
+                    }
 
-        newArrivals = new ArrayList<NewArrival>();
-        for(int i = 0; i< MyNewArival.newarrival.length; i++){
-            newArrivals.add(new NewArrival(
-                    MyNewArival.newarrival[i],
-                    MyNewArival.id[i]
-            ));
-        }
-        newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
-        bestsellerList.setAdapter(newArrivalAdapter);
-//*************
+                    @Override
+                    public void onLongItemClick(View view, int position) {
 
+                    }
+                })
+        );
+//*****************************
+
+//new arrival****************************
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-
         newarrivalList.setHasFixedSize(true);
         newarrivalList.setLayoutManager(layoutManager1);
-
-        newArrivals = new ArrayList<NewArrival>();
-        for(int i = 0; i< MyNewArival.newarrival.length; i++){
-            newArrivals.add(new NewArrival(
-                    MyNewArival.newarrival[i],
-                    MyNewArival.id[i]
-            ));
-        }
+        newArrivals = new ArrayList<>();
         newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
         newarrivalList.setAdapter(newArrivalAdapter);
-
         newarrivalList.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        String categoryName = newArrivals.get(position).getNewArrival();
+                        String men_product_url =main_url+String.valueOf(newArrivals.get(position).getId());;
+                        product_details_api_request(men_product_url);
 
-                        switch (categoryName){
-                            case "WOMEN":
-                                String women_url =main_url+"34";
-                                newProductDetails.clear();
-                                product_details_api_request(women_url);
-                                break;
-
-                            case "MEN":
-                                String men_url =main_url+"37";
-                                newProductDetails.clear();
-                                product_details_api_request(men_url);
-                                break;
-
-                            case "KIDS":
-                                String kid =main_url+"46";
-                                newProductDetails.clear();
-                                product_details_api_request(kid);
-                                break;
-
-                            case "WATCHES":
-                                String WATCHES =main_url+"88";
-                                newProductDetails.clear();
-                                product_details_api_request(WATCHES);
-                                break;
-
-                            case "SUNGLASES":
-                                String SUNGLASES =main_url+"54";
-                                newProductDetails.clear();
-                                product_details_api_request(SUNGLASES);
-                                break;
-
-                            case "COSMETICS":
-                                String COSMETICS =main_url+"280";
-                                newProductDetails.clear();
-                                product_details_api_request(COSMETICS);
-                                break;
-
-                            case "PERFUMES & BODY SPRAY":
-                                String PERFUMES =main_url+"84";
-                                newProductDetails.clear();
-                                product_details_api_request(PERFUMES);
-                                break;
-
-                            case "WINTER COLLECTION":
-                                String WINTER =main_url+"239";
-                                newProductDetails.clear();
-                                product_details_api_request(WINTER);
-                                break;
-
-                            case "LADIES BAG":
-                                String LADIES =main_url+"134";
-                                newProductDetails.clear();
-                                product_details_api_request(LADIES);
-                                break;
-                            //"KIDS", "WATCHES", "SUNGLASES", "COSMETICS", "PERFUMES & BODY SPRAY","LADIES BAG", "WINTER COLLECTION"
-
-                        }
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -277,6 +226,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                     }
                 })
         );
+//**********************************
+
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
         url_maps.put("Welcome to Infinity", "http://static2.hypable.com/wp-content/uploads/2013/12/hannibal-season-2-release-date.jpg");
@@ -312,6 +263,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             mDemoSlider.addOnPageChangeListener(this);
         }
 
+        categories_api_request();
+
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         productDetailsList.setHasFixedSize(true);
         productDetailsList.setLayoutManager(layoutManager2);
@@ -340,15 +293,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 })
         );
 
-//        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-//        BestsellerDetailList.setHasFixedSize(true);
-//        BestsellerDetailList.setLayoutManager(layoutManager4);
-//
-//        newProductDetails = new ArrayList<Product_details>();
-//        String men_product_url2 =main_url+"37";
-//        product_details_api_request(men_product_url2);
-//        newProductDetailAdapter  = new Product_details_adapter(getActivity(),newProductDetails);
-//        BestsellerDetailList.setAdapter(newProductDetailAdapter);
+        LinearLayoutManager layoutManager4 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        bestsellerDetailList.setHasFixedSize(true);
+        bestsellerDetailList.setLayoutManager(layoutManager4);
+
+        bestSellerProductDetailsArrayList = new ArrayList<>();
+        String men_product_url2 =main_url2+"37";
+        product_details_api_request2(men_product_url2);
+        bestSellerProductDetailsAdapter  = new Product_details_adapter(getActivity(),bestSellerProductDetailsArrayList);
+        bestsellerDetailList.setAdapter(bestSellerProductDetailsAdapter);
 
         YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -375,10 +328,10 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     }
 
-    public void request2(){
+    public void categories_api_request(){
 
         // Creating volley request obj
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest(url,
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(category_url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -389,15 +342,12 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                             try {
 
                                 JSONObject obj = response.getJSONObject(i);
-                                Exclusive model = new Exclusive();
+                                NewArrival model = new NewArrival();
                                 model.setId(obj.getInt("id"));
-                                model.setExclusiveText(obj.getString("name"));
-                                JSONArray img = obj.getJSONArray("images");
-                                JSONObject item = img.getJSONObject(0);
-                                String image = item.getString("src");
-                                model.setImage(image);
-                                // adding model to movies array
-                                exclusives.add(model);
+                                model.setNewArrival(obj.getString("name"));
+                                // adding model to category array
+                                bestSellerCategoryArraylist.add(model);
+                                newArrivals.add(model);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -407,14 +357,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        exclusivelistAdapter.notifyDataSetChanged();
+                        bestSellerCategoryAdapter.notifyDataSetChanged();
+                        newArrivalAdapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"error req2",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"home fragment error",Snackbar.LENGTH_LONG).show();
 
             }
         }){
@@ -470,8 +421,107 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     }
 
+
+
+
+    public void request2(){
+
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                Exclusive model = new Exclusive();
+                                model.setId(obj.getInt("id"));
+                                model.setExclusiveText(obj.getString("name"));
+                                JSONArray img = obj.getJSONArray("images");
+                                JSONObject item = img.getJSONObject(0);
+                                String image = item.getString("src");
+                                model.setImage(image);
+                                // adding model to movies array
+                                exclusives.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        exclusivelistAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"error req2",Snackbar.LENGTH_LONG).show();
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+            /*@Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }*/
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
     public void product_details_api_request(String api){
         new_arrival_progress.setVisibility(View.VISIBLE);
+        newProductDetails.clear();
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
@@ -514,6 +564,105 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
                 Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
                 new_arrival_progress.setVisibility(View.GONE);
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+  public void product_details_api_request2(String api){
+        bestseller_progressbar.setVisibility(View.VISIBLE);
+      bestSellerProductDetailsArrayList.clear();
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                Product_details model = new Product_details();
+                                model.setId(obj.getInt("id"));
+                                model.setProduct_name(obj.getString("name"));
+                                model.setProduct_price(obj.getString("price"));
+                                JSONArray img = obj.getJSONArray("images");
+                                JSONObject item = img.getJSONObject(0);
+                                String image = item.getString("src");
+                                model.setProduct_image(image);
+                                // adding model to product details  array
+                                bestSellerProductDetailsArrayList.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                                bestseller_progressbar.setVisibility(View.GONE);
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        bestseller_progressbar.setVisibility(View.GONE);
+                        bestSellerProductDetailsAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                bestseller_progressbar.setVisibility(View.GONE);
 
             }
         }){

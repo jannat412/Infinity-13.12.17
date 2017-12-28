@@ -61,10 +61,10 @@
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="450dp">
+                android:layout_height="420dp">
                 <GridView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/exclusive"
                     android:numColumns="2"></GridView>
             </LinearLayout>
@@ -101,12 +101,12 @@
                         android:layout_width="match_parent"
                         android:background="@android:color/darker_gray"
                         android:layout_height="1dp"/>
-                    <!--<ProgressBar-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/bestseller_progressbar"-->
-                        <!--style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-                        <!--android:indeterminate="true"-->
+                    <ProgressBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/bestseller_progressbar"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:indeterminate="true"
                         />
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/bestsellerDetailList"

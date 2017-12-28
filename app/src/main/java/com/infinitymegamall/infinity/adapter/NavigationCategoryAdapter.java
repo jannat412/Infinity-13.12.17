@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.infinitymegamall.infinity.R;
+import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.nv_category;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ import java.util.ArrayList;
 
 public class NavigationCategoryAdapter extends BaseAdapter {
     Context c;
-    private ArrayList<nv_category> categories;
+    private ArrayList<NewArrival> categories;
 
-    public NavigationCategoryAdapter(Context c, ArrayList<nv_category> navigationCategory) {
+    public NavigationCategoryAdapter(Context c, ArrayList<NewArrival> navigationCategory) {
         this.c = c;
         this.categories = navigationCategory;
     }
@@ -44,8 +45,8 @@ public class NavigationCategoryAdapter extends BaseAdapter {
         }
         TextView categoryName= (TextView) convertView.findViewById(R.id.navigationCategorylist);
 
-        final nv_category s= (nv_category) this.getItem(position);
-        categoryName.setText(s.getCategoryName());
+        NewArrival s= (NewArrival) this.getItem(position);
+        categoryName.setText(s.getNewArrival());
         return convertView;
     }
 

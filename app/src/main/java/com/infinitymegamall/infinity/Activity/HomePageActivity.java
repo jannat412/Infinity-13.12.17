@@ -1,6 +1,7 @@
 package com.infinitymegamall.infinity.Activity;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -39,6 +40,7 @@ import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.adapter.NavigationCategoryAdapter;
 import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
+import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.nv_category;
 
 import org.json.JSONArray;
@@ -56,7 +58,7 @@ public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,SwipeRefreshLayout.OnRefreshListener {
 
     private static ListView listView;
-    private static ArrayList<nv_category> categories;
+    private static ArrayList<NewArrival> categories;
     NavigationCategoryAdapter adapter;
     LinearLayout parentlayout;
     public FragmentTransaction fragmentTransaction;
@@ -97,7 +99,7 @@ public class HomePageActivity extends AppCompatActivity
                 }
         );
 
-        categories = new ArrayList<nv_category>();
+        categories = new ArrayList<>();
 
         categories_api_request();
 /*        for (int i = 0; i < MyData.category.length; i++) {
@@ -124,7 +126,7 @@ public class HomePageActivity extends AppCompatActivity
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
                 fragmentTransaction.commit();
-                Toast.makeText(HomePageActivity.this, ""+categories.get(position).getCategoryName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomePageActivity.this, ""+categories.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -154,6 +156,7 @@ public class HomePageActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         parentlayout = (LinearLayout) findViewById(R.id.parentlayout);
         homeFragment = new HomeFragment();
         fragmentManager = getSupportFragmentManager();
@@ -178,9 +181,9 @@ public class HomePageActivity extends AppCompatActivity
                             try {
 
                                 JSONObject obj = response.getJSONObject(i);
-                                nv_category model = new nv_category();
+                                NewArrival model = new NewArrival();
                                 model.setId(obj.getInt("id"));
-                                model.setCategoryName(obj.getString("name"));
+                                model.setNewArrival(obj.getString("name"));
 
                                 // adding model to movies array
                                 categories.add(model);
