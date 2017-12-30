@@ -61,7 +61,7 @@
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="420dp">
+                android:layout_height="430dp">
                 <GridView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -88,8 +88,8 @@
                             android:textStyle="bold"
                             android:padding="5dp"
                             android:layout_marginLeft="5dp"
-                            android:textColor="@android:color/black"
-                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                            android:textColor="@color/red"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:text="BEST SELLER"/>
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/bestsellerList"
@@ -136,8 +136,8 @@
                             android:textStyle="bold"
                             android:padding="5dp"
                             android:layout_marginLeft="5dp"
-                            android:textColor="@android:color/black"
-                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                            android:textColor="@color/red"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:text="NEW ARRIVALS"/>
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/newarrivalList"

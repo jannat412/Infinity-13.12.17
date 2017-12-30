@@ -22,16 +22,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:weightSum="2"
+                    android:layout_marginLeft="45dp"
                     android:orientation="horizontal">
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:layout_height="0dp"/>
-
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/category_item_List"
-                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                     </android.support.v7.widget.RecyclerView>
