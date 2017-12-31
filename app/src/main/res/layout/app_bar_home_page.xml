@@ -18,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#e92325"
+            android:background="@color/colorPrimaryDark"
             >
             <ImageView
                 android:id="@+id/menuRight"

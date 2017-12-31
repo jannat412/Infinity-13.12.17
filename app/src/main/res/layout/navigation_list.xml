@@ -13,13 +13,13 @@
         android:text="MEN"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="3dp"
-        android:textColor="#000"
+        android:textColor="@android:color/black"
         android:background="@android:color/transparent"
         android:textStyle="bold"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="#e92325"></View>
+        android:layout_height="1dp"
+        android:background="@android:color/black"></View>
 </LinearLayout>
