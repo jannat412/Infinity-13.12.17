@@ -345,7 +345,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 if (!wasRestored) {
                     player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
                     player.loadVideo(VIDEO_ID);
-                    player.play();
                 }
             }
 

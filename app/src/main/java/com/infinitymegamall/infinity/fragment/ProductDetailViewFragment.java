@@ -102,28 +102,9 @@ public class ProductDetailViewFragment extends Fragment {
         galleryView = (ImageView)getActivity().findViewById(R.id.galleryView);
         galler_list = (RecyclerView) getActivity().findViewById(R.id.galler_list);
 
-        up = (ImageView) getActivity().findViewById(R.id.up);
-        down = (ImageView) getActivity().findViewById(R.id.down);
-        quantity = (EditText) getActivity().findViewById(R.id.quantity);
-        quantity.setText(String.valueOf(quantities));
         product_name = (TextView) getActivity().findViewById(R.id.product_name);
         product_price = (TextView) getActivity().findViewById(R.id.product_price);
         addtocart = (TextView) getActivity().findViewById(R.id.addtocart);
-
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                quantities++;
-                quantity.setText(Integer.toString(quantities));
-            }
-        });
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                quantities--;
-                quantity.setText(Integer.toString(quantities));
-            }
-        });
 
 
 
@@ -171,7 +152,6 @@ public class ProductDetailViewFragment extends Fragment {
 
                             for(int i=0;i<array.length();i++){
                                 JSONObject obj = array.getJSONObject(i);
-                                galleries.add(new Gallery(obj.getString("src"),response.getInt("id")));
                                 if(i==0){
                                     Glide.with(getActivity())
                                             .load(obj.getString("src"))
@@ -180,7 +160,7 @@ public class ProductDetailViewFragment extends Fragment {
                                             .crossFade()
                                             .into(galleryView);
                                 }
-
+                                galleries.add(new Gallery(obj.getString("src"),response.getInt("id")));
                             }
 
                             // adding model to product details  array
