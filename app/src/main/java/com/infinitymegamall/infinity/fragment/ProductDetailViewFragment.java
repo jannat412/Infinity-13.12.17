@@ -61,7 +61,7 @@ public class ProductDetailViewFragment extends Fragment {
     private TextView product_name, product_price, addtocart;
     private EditText quantity;
     private ImageView up, down;
-    int quantities = 0;
+    int quantities = 1;
 
     private static String productId;
     private View v;
@@ -166,7 +166,7 @@ public class ProductDetailViewFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             product_name.setText(response.getString("name"));
-                            product_price.setText(response.getString("price"));
+                            product_price.setText("৳ "+ response.getString("price"));
                             JSONArray array = response.getJSONArray("images");
 
                             for(int i=0;i<array.length();i++){

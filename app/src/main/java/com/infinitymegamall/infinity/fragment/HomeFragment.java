@@ -246,9 +246,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
         HashMap<String,Integer> file_maps = new HashMap<String, Integer>();
         file_maps.put("Welcome to Infinity",R.drawable.slider1);
-        file_maps.put("Welcome to Infinity",R.drawable.slider2);
-        file_maps.put("Welcome to Infinity",R.drawable.slider3);
-        file_maps.put("Welcome to Infinity", R.drawable.slider4);
+        file_maps.put("Buy & Get Points",R.drawable.slider2);
+        file_maps.put("Happy to see you",R.drawable.slider3);
+        file_maps.put("Get Points", R.drawable.slider4);
 
         for(String name : file_maps.keySet()){
             TextSliderView textSliderView = new TextSliderView(getActivity());
