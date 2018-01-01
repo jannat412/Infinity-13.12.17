@@ -310,7 +310,7 @@ public class HomePageActivity extends AppCompatActivity
     }
 
     public void wishlist(View view) {
-        Snackbar.make(v,"Wishlist",Snackbar.LENGTH_LONG).show();
+
         wishFragment = new WishlistFragment();
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -321,6 +321,11 @@ public class HomePageActivity extends AppCompatActivity
 
     public void user(View view) {
         Snackbar.make(v,"user",Snackbar.LENGTH_LONG).show();
+
+    }
+
+    public void more(View view) {
+        Snackbar.make(v,"More",Snackbar.LENGTH_LONG).show();
 
     }
 

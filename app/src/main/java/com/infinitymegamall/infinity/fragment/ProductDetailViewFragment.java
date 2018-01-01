@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
@@ -58,8 +61,7 @@ public class ProductDetailViewFragment extends Fragment {
     private static RecyclerView.Adapter galleryAdapter;
     private ImageView galleryView;
 
-    private TextView product_name, product_price, addtocart;
-    private EditText quantity;
+    private TextView product_name, product_price,product_description,product_variation;
     private ImageView up, down;
     int quantities = 1;
 
@@ -68,6 +70,12 @@ public class ProductDetailViewFragment extends Fragment {
     private static String producyURL ="https://infinitymegamall.com/wp-json/wc/v2/products/";
     private static String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     private static String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
+    Spinner spinner_size,spinner_quantity ;
+    List<String> sizes;
+    ArrayAdapter<String> size_Adapter;
+    ArrayAdapter<CharSequence> quantity_Adapter;
+
+
 
     public ProductDetailViewFragment() {
         // Required empty public constructor
@@ -78,10 +86,8 @@ public class ProductDetailViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-
             productId = Integer.toString(getArguments().getInt("productId"));
-            Toast.makeText(getActivity(),productId,Toast.LENGTH_LONG).show();
-
+            //Toast.makeText(getActivity(),productId,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -104,9 +110,20 @@ public class ProductDetailViewFragment extends Fragment {
 
         product_name = (TextView) getActivity().findViewById(R.id.product_name);
         product_price = (TextView) getActivity().findViewById(R.id.product_price);
-        addtocart = (TextView) getActivity().findViewById(R.id.addtocart);
+        product_description = (TextView) getActivity().findViewById(R.id.product_description);
+        product_variation = (TextView) getActivity().findViewById(R.id.product_variation);
 
 
+        spinner_size = (Spinner) getActivity().findViewById(R.id.size_spinner);
+        sizes = new ArrayList<String>();
+        size_Adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_activated_1, sizes);
+        size_Adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
+        spinner_size.setAdapter(size_Adapter);
+
+        spinner_quantity = (Spinner) getActivity().findViewById(R.id.quantity_spinner);
+        quantity_Adapter = ArrayAdapter.createFromResource(getActivity(),R.array.quantity, android.R.layout.simple_list_item_activated_1);
+        quantity_Adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
+        spinner_quantity.setAdapter(quantity_Adapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         galler_list.setHasFixedSize(true);
@@ -148,11 +165,28 @@ public class ProductDetailViewFragment extends Fragment {
                         try {
                             product_name.setText(response.getString("name"));
                             product_price.setText("৳ "+ response.getString("price"));
-                            JSONArray array = response.getJSONArray("images");
+                            product_description.setText("Description: "+response.getString("short_description"));
 
-                            for(int i=0;i<array.length();i++){
-                                JSONObject obj = array.getJSONObject(i);
-                                if(i==0){
+                            JSONArray attributeArray = response.getJSONArray("attributes");
+                            if(attributeArray!=null){
+                                JSONObject attObj = attributeArray.getJSONObject(0);
+                                String variation_name =attObj.getString("name");
+                                product_variation.setText(variation_name);
+                                JSONArray attArray = attObj.getJSONArray("options");
+                                if(attArray!=null){
+                                    for (int i=0;i<attArray.length();i++){
+                                        sizes.add(attArray.getString(i));
+                                    }
+
+                                }
+
+                            }
+
+                            JSONArray imagearray = response.getJSONArray("images");
+                            if (imagearray!=null){
+                            for(int i=0;i<imagearray.length();i++) {
+                                JSONObject obj = imagearray.getJSONObject(i);
+                                if (i == 0) {
                                     Glide.with(getActivity())
                                             .load(obj.getString("src"))
                                             .centerCrop()
@@ -160,16 +194,26 @@ public class ProductDetailViewFragment extends Fragment {
                                             .crossFade()
                                             .into(galleryView);
                                 }
-                                galleries.add(new Gallery(obj.getString("src"),response.getInt("id")));
+                                galleries.add(new Gallery(obj.getString("src"), response.getInt("id")));
+                            }
+
+                            }
+                            JSONArray relatedProductArray = response.getJSONArray("related_ids");
+                            if(relatedProductArray!=null){
+                                for(int j=0;j<relatedProductArray.length();j++){
+
+                                    String id = relatedProductArray.getString(j);
+                                    Snackbar.make(v,id+"somting",Snackbar.LENGTH_SHORT).show();
+                                }
                             }
 
                             // adding model to product details  array
-                            Snackbar.make(v,"grid  ",Snackbar.LENGTH_SHORT).show();
-
+                            //Snackbar.make(v,"grid  ",Snackbar.LENGTH_SHORT).show();
+                            size_Adapter.notifyDataSetChanged();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(v,"jason parse vul hosse",Snackbar.LENGTH_LONG).show();
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data

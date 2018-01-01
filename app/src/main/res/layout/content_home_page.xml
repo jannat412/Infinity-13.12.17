@@ -33,15 +33,16 @@
             android:id="@+id/homes"
             android:onClick="home"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="?android:attr/selectableItemBackground">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:scaleType="fitCenter"
                 android:id="@+id/home"
                 android:padding="4dp"
-                android:src="@drawable/ic_home_black_48dp"
-                android:layout_weight="2"/>
+                android:src="@drawable/ic_home_black_24dp"
+                android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -49,15 +50,16 @@
             android:id="@+id/wishlists"
             android:onClick="wishlist"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:padding="4dp"
                 android:scaleType="fitCenter"
                 android:id="@+id/wishlist"
-                android:src="@drawable/ic_favorite_border_black_48dp"
-                android:layout_weight="2"/>
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -65,15 +67,33 @@
             android:id="@+id/users"
             android:onClick="user"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:padding="4dp"
                 android:scaleType="fitCenter"
                 android:id="@+id/user"
-                android:src="@drawable/ic_person_black_48dp"
-                android:layout_weight="2"/>
+                android:src="@drawable/ic_person_outline_black_24dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/mores"
+            android:onClick="more"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:id="@+id/more"
+                android:src="@drawable/ic_more_horiz_black_24dp"
+                android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
 

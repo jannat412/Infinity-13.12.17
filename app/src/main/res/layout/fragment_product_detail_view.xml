@@ -9,25 +9,7 @@
       android:layout_height="match_parent"
       android:layout_margin="10dp"
       android:orientation="vertical">
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-          <ImageView
-              android:layout_width="30dp"
-              android:layout_height="30dp"
-              android:src="@drawable/back"
-              />
 
-          <ImageView
-              android:id="@+id/frvt"
-              android:layout_width="30dp"
-              android:layout_height="30dp"
-              android:layout_alignParentEnd="true"
-              android:layout_alignParentRight="true"
-              android:layout_alignParentTop="true"
-              android:src="@drawable/fvt_gray" />
-
-      </RelativeLayout>
       <ScrollView
           android:layout_width="match_parent"
           android:layout_height="match_parent">
@@ -35,12 +17,27 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
-              <ImageView
-                  android:id="@+id/galleryView"
-                  android:layout_gravity="center"
+              <RelativeLayout
                   android:layout_width="wrap_content"
-                  android:layout_height="250dp"
-                  android:src="@drawable/loading" />
+                  android:layout_height="wrap_content">
+                  <ImageView
+                      android:id="@+id/galleryView"
+                      android:layout_gravity="center"
+                      android:layout_width="wrap_content"
+                      android:layout_height="300dp"
+                      android:src="@drawable/loading" />
+
+                  <ImageView
+                      android:id="@+id/frvt"
+                      android:layout_width="40dp"
+                      android:layout_height="40dp"
+                      android:layout_alignParentBottom="true"
+                      android:layout_alignParentEnd="true"
+                      android:layout_alignParentRight="true"
+                      android:layout_marginRight="50dp"
+                      android:src="@drawable/fvt_gray" />
+              </RelativeLayout>
+
               <RelativeLayout
                   android:id="@+id/gallery_relative_layout"
                   android:layout_width="350dp"
@@ -63,7 +60,7 @@
                       android:layout_height="wrap_content">
                       <android.support.v7.widget.RecyclerView
                           android:layout_width="match_parent"
-                          android:layout_height="110dp"
+                          android:layout_height="100dp"
                           android:id="@+id/galler_list">
                       </android.support.v7.widget.RecyclerView>
                   </LinearLayout>
@@ -105,14 +102,38 @@
                   android:layout_marginBottom="10dp"
                   android:orientation="horizontal">
 
-                  <ExpandableListView
-                      android:layout_width="80dp"
+                  <TextView
+                      android:id="@+id/product_variation"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                      android:text="@string/nosize"
+                      android:textStyle="bold"
+                      android:textColor="@android:color/black" />
+                  <Spinner
+                      android:id="@+id/size_spinner"
+                      android:layout_width="70dp"
+                      android:layout_height="match_parent"
+                      android:padding="5dp"/>
+                  <TextView
+                      android:id="@+id/product_quantity"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                      android:text="@string/Quan"
+                      android:textStyle="bold"
+                      android:textColor="@android:color/black" />
+                  <Spinner
+                      android:id="@+id/quantity_spinner"
+                      android:layout_width="70dp"
                       android:layout_height="match_parent"
                       android:padding="5dp"/>
 
-                  <TextView
+                  <Button
                       android:id="@+id/addtocart"
-                      android:layout_width="wrap_content"
+                      android:layout_width="90dp"
                       android:layout_height="match_parent"
                       android:layout_gravity="left"
                       android:background="@color/grey"
@@ -123,7 +144,31 @@
                       android:textColor="@android:color/black"
                       android:textStyle="bold" />
               </LinearLayout>
+              <TextView
+                  android:id="@+id/product_description"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:textColor="@android:color/black"
+                  android:textStyle="bold"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                  android:text="@string/loading"
+                  android:maxLines="4"
+                  android:lines="2"/>
+
+              <android.support.v7.widget.RecyclerView
+                  android:id="@+id/relatedproducts_recycler"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+
+              </android.support.v7.widget.RecyclerView>
           </LinearLayout>
+
+
+
+
+
       </ScrollView>
 
 
