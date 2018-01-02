@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.infinitymegamall.infinity.R;
@@ -23,12 +24,12 @@ public class CategorylistAdapter extends RecyclerView.Adapter<CategorylistAdapte
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView textViewCategory;
-        de.hdodenhof.circleimageview.CircleImageView categoryImage;
+        ImageView categoryImage;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewCategory = (TextView) itemView.findViewById(R.id.category_name);
-            this.categoryImage = (de.hdodenhof.circleimageview.CircleImageView)itemView.findViewById(R.id.category_image);
+            this.categoryImage = (ImageView)itemView.findViewById(R.id.category_image);
         }
     }
 
@@ -48,7 +49,7 @@ public class CategorylistAdapter extends RecyclerView.Adapter<CategorylistAdapte
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
 
         TextView textViewCategory = holder.textViewCategory;
-        final de.hdodenhof.circleimageview.CircleImageView categoryImage = holder.categoryImage;
+        final ImageView categoryImage = holder.categoryImage;
 
 
         textViewCategory.setText(categories.get(listPosition).getCategoryName());

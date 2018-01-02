@@ -75,9 +75,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private static ArrayList<HomeCategory> categories;
     private static RecyclerView.Adapter categorylistAdapter;
 
-    private GridView exclusivelist;
-    private List<Exclusive> exclusives = new ArrayList<>();
-    private ExclusivelistAdapter exclusivelistAdapter;
+   // private GridView exclusivelist;
+   // private List<Exclusive> exclusives = new ArrayList<>();
+   // private ExclusivelistAdapter exclusivelistAdapter;
 
     private RecyclerView newarrivalList;
     private static ArrayList<NewArrival> newArrivals;
@@ -98,8 +98,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private ProgressBar new_arrival_progress;
     private ProgressBar bestseller_progressbar;
 
-    String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=";
-    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=1800&category=";
+    String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
+    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=3000&category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
@@ -128,116 +128,27 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         v = getActivity().findViewById(R.id.home_activity_id);
 
         HomePageActivity homePageActivity = (HomePageActivity) getActivity();
+
+        //top slider
         mDemoSlider = (SliderLayout)getActivity().findViewById(R.id.slider);
+
+        //Category drawer
         categorylistView = (RecyclerView) getActivity().findViewById(R.id.category_list);
-        exclusivelist = (GridView ) getActivity().findViewById(R.id.exclusive);
+
+        //exclusive grid view
+        //exclusivelist = (GridView ) getActivity().findViewById(R.id.exclusive);
+
+        //new arrival
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
         productDetailsList = (RecyclerView) getActivity().findViewById(R.id.newarrivalDetailList);
         new_arrival_progress = (ProgressBar) getActivity().findViewById(R.id.newarrival_progressbar);
 
-        request2();
-
+        //best seller
         bestsellerList = (RecyclerView) getActivity().findViewById(R.id.bestsellerList);
         bestsellerDetailList = (RecyclerView) getActivity().findViewById(R.id.bestsellerDetailList);
         bestseller_progressbar = (ProgressBar) getActivity().findViewById(R.id.bestseller_progressbar);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        categorylistView.setHasFixedSize(true);
-        categorylistView.setLayoutManager(layoutManager);
-
-        //circle categories under the slider
-        categories = new ArrayList<HomeCategory>();
-        for (int i = 0; i < MyCategory.category.length; i++) {
-            categories.add(new HomeCategory(
-                    MyCategory.category[i],
-                    MyCategory.image[i],
-                    MyCategory.id[i]
-
-            ));
-        }
-
-
-        categorylistAdapter = new CategorylistAdapter(getActivity(), categories);
-        categorylistView.setAdapter(categorylistAdapter);
-        categorylistView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), categorylistView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
-
-                    }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );
-
-        exclusivelistAdapter = new ExclusivelistAdapter(getActivity(),exclusives);
-        exclusivelist.setAdapter(exclusivelistAdapter);
-
-        exclusivelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
-                //Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
-                //Snackbar.make(v,exclusives.get(exPosition).getExclusiveText(),Snackbar.LENGTH_LONG).show();
-                int productId = exclusives.get(exPosition).getId();
-                Bundle bundle = new Bundle();
-                bundle.putInt("productId",productId);
-                productDetailViewFragment = new ProductDetailViewFragment();
-                productDetailViewFragment.setArguments(bundle);
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
-                transaction.addToBackStack("ProductDetailViewFragment");
-                transaction.commit();
-            }
-        });
-
-//bestseller
-        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        bestsellerList.setHasFixedSize(true);
-        bestsellerList.setLayoutManager(layoutManager3);
-        bestSellerCategoryArraylist = new ArrayList<>();
-        bestSellerCategoryAdapter = new BestSellerCategoryAdapter(getActivity(), bestSellerCategoryArraylist);
-        bestsellerList.setAdapter(bestSellerCategoryAdapter);
-        bestsellerList.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), bestsellerList, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        String men_product_url =main_url2+String.valueOf(newArrivals.get(position).getId());;
-                        product_details_api_request2(men_product_url);
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-
-                    }
-                })
-        );
-//*****************************
-
-//new arrival****************************
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        newarrivalList.setHasFixedSize(true);
-        newarrivalList.setLayoutManager(layoutManager1);
-        newArrivals = new ArrayList<>();
-        newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
-        newarrivalList.setAdapter(newArrivalAdapter);
-        newarrivalList.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        String men_product_url =main_url+String.valueOf(newArrivals.get(position).getId());;
-                        product_details_api_request(men_product_url);
-
-                    }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );
-//**********************************
-
-
+        //Image slider start
         HashMap<String,String> url_maps = new HashMap<String, String>();
         url_maps.put("Welcome to Infinity", "http://static2.hypable.com/wp-content/uploads/2013/12/hannibal-season-2-release-date.jpg");
         url_maps.put("Welcome to Infinity", "http://tvfiles.alphacoders.com/100/hdclearart-10.png");
@@ -246,9 +157,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
         HashMap<String,Integer> file_maps = new HashMap<String, Integer>();
         file_maps.put("Welcome to Infinity",R.drawable.slider1);
-        file_maps.put("Buy & Get Points",R.drawable.slider2);
+        file_maps.put("Buy exclusive products",R.drawable.slider2);
         file_maps.put("Happy to see you",R.drawable.slider3);
-        file_maps.put("Get Points", R.drawable.slider4);
+        file_maps.put("Best quality ", R.drawable.slider4);
 
         for(String name : file_maps.keySet()){
             TextSliderView textSliderView = new TextSliderView(getActivity());
@@ -271,8 +182,107 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             mDemoSlider.setDuration(4000);
             mDemoSlider.addOnPageChangeListener(this);
         }
+        //Image slider ends
 
-        categories_api_request();
+        //circle categories under the slider start
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        categorylistView.setHasFixedSize(true);
+        categorylistView.setLayoutManager(layoutManager);
+
+        categories = new ArrayList<HomeCategory>();
+        for (int i = 0; i < MyCategory.category.length; i++) {
+            categories.add(new HomeCategory(
+                    MyCategory.category[i],
+                    MyCategory.image[i],
+                    MyCategory.id[i]
+
+            ));
+        }
+
+        categorylistAdapter = new CategorylistAdapter(getActivity(), categories);
+        categorylistView.setAdapter(categorylistAdapter);
+        categorylistView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), categorylistView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
+        // circle category slider end
+
+
+        //exclusive products
+       /* exclusivelistAdapter = new ExclusivelistAdapter(getActivity(),exclusives);
+        exclusivelist.setAdapter(exclusivelistAdapter);
+
+        exclusivelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int exPosition, long l) {
+                //Toast.makeText(getActivity(), ""+exclusives.get(exPosition).getExclusiveText(), Toast.LENGTH_SHORT).show();
+                //Snackbar.make(v,exclusives.get(exPosition).getExclusiveText(),Snackbar.LENGTH_LONG).show();
+                int productId = exclusives.get(exPosition).getId();
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId",productId);
+                productDetailViewFragment = new ProductDetailViewFragment();
+                productDetailViewFragment.setArguments(bundle);
+                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                transaction.addToBackStack("ProductDetailViewFragment");
+                transaction.commit();
+            }
+        });*/
+
+
+        //new arrival****************************
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        newarrivalList.setHasFixedSize(true);
+        newarrivalList.setLayoutManager(layoutManager1);
+        newArrivals = new ArrayList<>();
+        newArrivalAdapter = new NewArrivalAdapter(getActivity(), newArrivals);
+        newarrivalList.setAdapter(newArrivalAdapter);
+        newarrivalList.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        String men_product_url =main_url+String.valueOf(newArrivals.get(position).getId());;
+                        product_details_api_request(men_product_url);
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
+        //new arrival**********************************
+
+
+        //bestseller tab
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        bestsellerList.setHasFixedSize(true);
+        bestsellerList.setLayoutManager(layoutManager3);
+        bestSellerCategoryArraylist = new ArrayList<>();
+        bestSellerCategoryAdapter = new BestSellerCategoryAdapter(getActivity(), bestSellerCategoryArraylist);
+        bestsellerList.setAdapter(bestSellerCategoryAdapter);
+        bestsellerList.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), bestsellerList, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String men_product_url =main_url2+String.valueOf(newArrivals.get(position).getId());;
+                        product_details_api_request2(men_product_url);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+                })
+        );
+
 
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         productDetailsList.setHasFixedSize(true);
@@ -310,7 +320,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         bestsellerDetailList.setLayoutManager(layoutManager4);
 
         bestSellerProductDetailsArrayList = new ArrayList<>();
-        String men_product_url2 =main_url2+"37";
+        String men_product_url2 =main_url2+"34";
         product_details_api_request2(men_product_url2);
         bestSellerProductDetailsAdapter  = new Product_details_adapter(getActivity(),bestSellerProductDetailsArrayList);
         bestsellerDetailList.setAdapter(bestSellerProductDetailsAdapter);
@@ -356,6 +366,9 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 Log.d("errorMessage:", errorMessage);
             }
         });
+
+        categories_api_request();
+        //request2();
 
     }
 
@@ -454,6 +467,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
 
 
+/*
 
     public void request2(){
 
@@ -509,7 +523,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 headers.put("Authorization", auth);
                 return headers;
             }
-            /*@Override
+            */
+/*@Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
                     Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
@@ -542,13 +557,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 } catch (JSONException e) {
                     return Response.error(new ParseError(e));
                 }
-            }*/
+            }*//*
+
         };
 
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+*/
 
     public void product_details_api_request(String api){
         new_arrival_progress.setVisibility(View.VISIBLE);
