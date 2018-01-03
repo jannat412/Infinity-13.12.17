@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -56,16 +58,13 @@ import static com.android.volley.VolleyLog.TAG;
 
 
 public class ProductDetailViewFragment extends Fragment {
+
     private RecyclerView galler_list;
     private static ArrayList<Gallery> galleries;
     private static RecyclerView.Adapter galleryAdapter;
     private ImageView galleryView;
-
     private TextView product_name, product_price,product_description,product_variation;
-    private ImageView up, down;
-    int quantities = 1;
-
-    private static String productId;
+    private static String productId="",productsize="",productquantity="";
     private View v;
     private static String producyURL ="https://infinitymegamall.com/wp-json/wc/v2/products/";
     private static String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
@@ -74,6 +73,9 @@ public class ProductDetailViewFragment extends Fragment {
     List<String> sizes;
     ArrayAdapter<String> size_Adapter;
     ArrayAdapter<CharSequence> quantity_Adapter;
+    private CartFragment cartFragment;
+    FragmentTransaction transaction;
+    private Button addtocart;
 
 
 
@@ -116,14 +118,23 @@ public class ProductDetailViewFragment extends Fragment {
 
         spinner_size = (Spinner) getActivity().findViewById(R.id.size_spinner);
         sizes = new ArrayList<String>();
-        size_Adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_activated_1, sizes);
-        size_Adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
+        size_Adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, sizes);
+        size_Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_size.setAdapter(size_Adapter);
 
         spinner_quantity = (Spinner) getActivity().findViewById(R.id.quantity_spinner);
-        quantity_Adapter = ArrayAdapter.createFromResource(getActivity(),R.array.quantity, android.R.layout.simple_list_item_activated_1);
-        quantity_Adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
+        quantity_Adapter = ArrayAdapter.createFromResource(getActivity(),R.array.quantity, android.R.layout.simple_spinner_item);
+        quantity_Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_quantity.setAdapter(quantity_Adapter);
+
+        addtocart =(Button) getActivity().findViewById(R.id.addtocart);
+        addtocart.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                addtocart();
+            }
+        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         galler_list.setHasFixedSize(true);
@@ -167,21 +178,6 @@ public class ProductDetailViewFragment extends Fragment {
                             product_price.setText("৳ "+ response.getString("price"));
                             product_description.setText("Description: "+response.getString("short_description"));
 
-                            JSONArray attributeArray = response.getJSONArray("attributes");
-                            if(attributeArray!=null){
-                                JSONObject attObj = attributeArray.getJSONObject(0);
-                                String variation_name =attObj.getString("name");
-                                product_variation.setText(variation_name);
-                                JSONArray attArray = attObj.getJSONArray("options");
-                                if(attArray!=null){
-                                    for (int i=0;i<attArray.length();i++){
-                                        sizes.add(attArray.getString(i));
-                                    }
-
-                                }
-
-                            }
-
                             JSONArray imagearray = response.getJSONArray("images");
                             if (imagearray!=null){
                             for(int i=0;i<imagearray.length();i++) {
@@ -203,13 +199,29 @@ public class ProductDetailViewFragment extends Fragment {
                                 for(int j=0;j<relatedProductArray.length();j++){
 
                                     String id = relatedProductArray.getString(j);
-                                    Snackbar.make(v,id+"somting",Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
                                 }
                             }
 
                             // adding model to product details  array
                             //Snackbar.make(v,"grid  ",Snackbar.LENGTH_SHORT).show();
                             size_Adapter.notifyDataSetChanged();
+                            JSONArray attributeArray = response.getJSONArray("attributes");
+                            if(attributeArray!=null){
+                                JSONObject attObj = attributeArray.getJSONObject(0);
+                                if(attObj!=null) {
+                                    String variation_name = attObj.getString("name");
+                                    product_variation.setText(variation_name);
+                                    JSONArray attArray = attObj.getJSONArray("options");
+                                    if (attArray != null) {
+                                        for (int i = 0; i < attArray.length(); i++) {
+                                            sizes.add(attArray.getString(i));
+                                        }
+
+                                    }
+                                }
+
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -281,5 +293,67 @@ public class ProductDetailViewFragment extends Fragment {
 
     }
 
+
+
+    public void addtocart(){
+
+        if( spinner_quantity.getSelectedItem() !=null && spinner_size.getSelectedItem() !=null ){
+            //Snackbar.make(v,"if condition true",Snackbar.LENGTH_LONG).show();
+            productquantity = (String)spinner_quantity.getSelectedItem();
+            productsize = (String)spinner_size.getSelectedItem();
+
+            Snackbar.make(v,productquantity+" "+productsize,Snackbar.LENGTH_LONG).show();
+            Bundle bundle = new Bundle();
+            bundle.putString("productquantity",productquantity);
+            bundle.putString("productsize",productsize);
+            bundle.putString("productid",productId);
+            cartFragment = new CartFragment();
+            cartFragment.setArguments(bundle);
+            transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.child_fragment_container, cartFragment);
+            transaction.addToBackStack("ProductDetailViewFragment");
+            transaction.commit();
+
+        }
+        else if(spinner_size.getSelectedItem() == null && spinner_quantity.getSelectedItem() != null ){
+            Snackbar.make(v,"size is default",Snackbar.LENGTH_LONG).show();
+            productquantity = (String) spinner_quantity.getSelectedItem();
+            productsize = "default";
+
+            Bundle bundle = new Bundle();
+            bundle.putString("productquantity",productquantity);
+            bundle.putString("productsize",productsize);
+            bundle.putString("productid",productId);
+            cartFragment = new CartFragment();
+            cartFragment.setArguments(bundle);
+            transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.child_fragment_container, cartFragment);
+            transaction.addToBackStack("ProductDetailViewFragment");
+            transaction.commit();
+        }
+        else {
+            Snackbar.make(v,"size or quantity is missing",Snackbar.LENGTH_SHORT).show();
+        }
+
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

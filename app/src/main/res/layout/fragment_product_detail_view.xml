@@ -100,7 +100,8 @@
                   android:layout_gravity="center"
                   android:gravity="center"
                   android:layout_marginBottom="10dp"
-                  android:orientation="horizontal">
+                  android:orientation="horizontal"
+                  android:background="?android:attr/selectableItemBackground">
 
                   <TextView
                       android:id="@+id/product_variation"

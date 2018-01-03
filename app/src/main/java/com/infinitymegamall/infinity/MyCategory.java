@@ -5,8 +5,8 @@ package com.infinitymegamall.infinity;
  */
 
 public class MyCategory {
-    public static String[] category = {"MEN", "WOMEN", "KIDS", "WATCHES", "SUNGLASES", "COSMETICS","LADIES BAG"};
+    public static String[] category = {"MEN", "WOMEN", "KIDS", "WATCHES", "SUNGLASES", "COSMETICS"};
     public static Integer[] image = {R.drawable.men, R.drawable.women, R.drawable.kidsss, R.drawable.watch,
-                                        R.drawable.sunglass, R.drawable.perfumebodyspray, R.drawable.ladiesbaggg};
-    public static Integer[] id = {0, 1, 2, 3, 4, 5, 6};
+                                        R.drawable.sunglass, R.drawable.perfumebodyspray};
+    public static Integer[] id = {37, 34, 46, 88, 54, 280};
 }

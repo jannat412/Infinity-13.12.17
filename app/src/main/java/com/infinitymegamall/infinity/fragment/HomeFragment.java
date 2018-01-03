@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -68,7 +70,10 @@ import static com.android.volley.VolleyLog.TAG;
 public class HomeFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener{
 
     FragmentTransaction transaction;
+    public FragmentManager fragmentManager;
+    public FragmentTransaction fragmentTransaction;
     private ProductDetailViewFragment productDetailViewFragment;
+    private CategoryItemFragment categoryItemFragment;
 
     private SliderLayout mDemoSlider;
     private RecyclerView categorylistView;
@@ -205,6 +210,15 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                 new RecyclerItemClickListener(getActivity(), categorylistView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
+                        Bundle bundle = new Bundle();
+                        int id= categories.get(position).getId();
+                        bundle.putInt("category",id);
+                        categoryItemFragment = new CategoryItemFragment();
+                        categoryItemFragment.setArguments(bundle);
+                        fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+                        fragmentTransaction.commit();
 
                     }
 
@@ -362,7 +376,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             public void onInitializationFailure(Provider provider, YouTubeInitializationResult error) {
                 // YouTube error
                 String errorMessage = error.toString();
-                Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
+                Snackbar.make(v,errorMessage,Snackbar.LENGTH_LONG).show();
                 Log.d("errorMessage:", errorMessage);
             }
         });
@@ -460,7 +474,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             }
         };
 
-        // Adding request to request queue
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }

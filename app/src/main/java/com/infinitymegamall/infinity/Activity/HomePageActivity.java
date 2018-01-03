@@ -119,6 +119,7 @@ public class HomePageActivity extends AppCompatActivity
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
+
                 Bundle bundle = new Bundle();
                 int id= categories.get(position).getId();
                 bundle.putInt("category",id);
@@ -128,7 +129,7 @@ public class HomePageActivity extends AppCompatActivity
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
                 fragmentTransaction.commit();
-                Toast.makeText(HomePageActivity.this, ""+categories.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(HomePageActivity.this, ""+categories.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
             }
         });
 
