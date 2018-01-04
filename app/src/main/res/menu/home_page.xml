@@ -7,10 +7,10 @@
         android:title="Search"
         android:icon="@drawable/ic_search_black_48dp"
         app:showAsAction="always" />
-    <item
+   <!-- <item
         android:id="@+id/action_cart"
         android:orderInCategory="100"
         android:title="cart"
         android:icon="@drawable/ic_shopping_cart_black_48dp"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
 </menu>

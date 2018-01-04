@@ -38,6 +38,7 @@ import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyData;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.adapter.NavigationCategoryAdapter;
+import com.infinitymegamall.infinity.fragment.CartFragment;
 import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
@@ -67,6 +68,7 @@ public class HomePageActivity extends AppCompatActivity
     private HomeFragment homeFragment;
     private WishlistFragment wishFragment;
     private CategoryItemFragment categoryItemFragment;
+    private CartFragment cartFragment;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     View v;
@@ -286,10 +288,10 @@ public class HomePageActivity extends AppCompatActivity
         if (id == R.id.action_search) {
 
             return true;
-        }else if (id == R.id.action_cart) {
+        }/*else if (id == R.id.action_cart) {
 
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -307,6 +309,14 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
+        fragmentTransaction.commit();
+    }
+
+    public void cart(View view){
+        cartFragment = new CartFragment();
+        fragmentManager =getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container, cartFragment);
         fragmentTransaction.commit();
     }
 
