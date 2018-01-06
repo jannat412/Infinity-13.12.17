@@ -9,10 +9,14 @@
       android:layout_height="match_parent"
       android:layout_margin="10dp"
       android:orientation="vertical">
-
-      <ScrollView
+      <android.support.v4.widget.SwipeRefreshLayout
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:id="@+id/productdetails_swiperefresh"
           android:layout_width="match_parent"
-          android:layout_height="match_parent">
+          android:layout_height="wrap_content">
+      <!--<ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">-->
           <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -109,7 +113,7 @@
                       android:layout_height="match_parent"
                       android:gravity="center"
                       android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                      android:text="@string/nosize"
+                      android:text="@string/loading"
                       android:textStyle="bold"
                       android:textColor="@android:color/black" />
                   <Spinner
@@ -169,9 +173,9 @@
 
 
 
-
-      </ScrollView>
-
+<!--
+      </ScrollView>-->
+      </android.support.v4.widget.SwipeRefreshLayout>
 
   </LinearLayout>
 

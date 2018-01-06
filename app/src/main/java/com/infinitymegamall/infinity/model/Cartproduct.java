@@ -21,6 +21,10 @@ public class Cartproduct {
         this.productQuantity = productQuantity;
     }
 
+    public Cartproduct() {
+
+    }
+
     public String getProductId() {
         return productId;
     }

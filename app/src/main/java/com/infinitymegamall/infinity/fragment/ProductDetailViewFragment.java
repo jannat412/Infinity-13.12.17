@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -76,7 +77,7 @@ public class ProductDetailViewFragment extends Fragment {
     private CartFragment cartFragment;
     FragmentTransaction transaction;
     private Button addtocart;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     public ProductDetailViewFragment() {
@@ -107,6 +108,19 @@ public class ProductDetailViewFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         v = getActivity().findViewById(R.id.home_activity_id);
+        swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.productdetails_swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        sizes.clear();
+                        galleries.clear();
+                        product_request(producyURL+productId);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+        );
+
         galleryView = (ImageView)getActivity().findViewById(R.id.galleryView);
         galler_list = (RecyclerView) getActivity().findViewById(R.id.galler_list);
 
@@ -194,20 +208,11 @@ public class ProductDetailViewFragment extends Fragment {
                             }
 
                             }
-                            JSONArray relatedProductArray = response.getJSONArray("related_ids");
-                            if(relatedProductArray!=null){
-                                for(int j=0;j<relatedProductArray.length();j++){
 
-                                    String id = relatedProductArray.getString(j);
-                                    Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            // adding model to product details  array
                             //Snackbar.make(v,"grid  ",Snackbar.LENGTH_SHORT).show();
-                            size_Adapter.notifyDataSetChanged();
+
                             JSONArray attributeArray = response.getJSONArray("attributes");
-                            if(attributeArray!=null){
+                            if(attributeArray!=null && attributeArray.length()>0){
                                 JSONObject attObj = attributeArray.getJSONObject(0);
                                 if(attObj!=null) {
                                     String variation_name = attObj.getString("name");
@@ -221,7 +226,22 @@ public class ProductDetailViewFragment extends Fragment {
                                     }
                                 }
 
+                            }else {
+                                product_variation.setText("no size");
+                                spinner_size.setClickable(false);
+                                spinner_size.setEnabled(false);
                             }
+
+                            JSONArray relatedProductArray = response.getJSONArray("related_ids");
+                            if(relatedProductArray!=null &&relatedProductArray.length()>0){
+                                for(int j=0;j<relatedProductArray.length();j++){
+
+                                    String id = relatedProductArray.getString(j);
+                                    Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            size_Adapter.notifyDataSetChanged();
 
                         } catch (JSONException e) {
                             e.printStackTrace();

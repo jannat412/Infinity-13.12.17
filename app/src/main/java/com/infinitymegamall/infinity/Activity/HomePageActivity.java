@@ -41,6 +41,7 @@ import com.infinitymegamall.infinity.adapter.NavigationCategoryAdapter;
 import com.infinitymegamall.infinity.fragment.CartFragment;
 import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
+import com.infinitymegamall.infinity.fragment.UserProfileFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.nv_category;
@@ -69,6 +70,7 @@ public class HomePageActivity extends AppCompatActivity
     private WishlistFragment wishFragment;
     private CategoryItemFragment categoryItemFragment;
     private CartFragment cartFragment;
+    private UserProfileFragment userProfileFragment;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     View v;
@@ -331,8 +333,12 @@ public class HomePageActivity extends AppCompatActivity
     }
 
     public void user(View view) {
-        Snackbar.make(v,"user",Snackbar.LENGTH_LONG).show();
-
+        //Snackbar.make(v,"user",Snackbar.LENGTH_LONG).show();
+        userProfileFragment = new UserProfileFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
+        fragmentTransaction.commit();
     }
 
     public void more(View view) {
