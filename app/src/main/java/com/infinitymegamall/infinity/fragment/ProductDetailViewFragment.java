@@ -237,7 +237,7 @@ public class ProductDetailViewFragment extends Fragment {
                                 for(int j=0;j<relatedProductArray.length();j++){
 
                                     String id = relatedProductArray.getString(j);
-                                    Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
+                                    //Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
                                 }
                             }
 

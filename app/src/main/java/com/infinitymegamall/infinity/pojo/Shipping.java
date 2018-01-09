@@ -1,5 +1,5 @@
 
-package com.infinitymegamall.infinity;
+package com.infinitymegamall.infinity.pojo;
 
 import java.io.Serializable;
 import android.os.Parcel;

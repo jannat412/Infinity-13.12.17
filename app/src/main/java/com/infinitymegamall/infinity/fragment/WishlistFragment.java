@@ -54,7 +54,7 @@ public class WishlistFragment extends Fragment {
         wishlistRv.setHasFixedSize(true);
         wishlistRv.setLayoutManager(layoutManager1);
         wishArraylist = new ArrayList<>();
-        wishArraylist.add(new Product_details(2,"Jannat","233","https://assets.teleflora.com/images/customhtml/meaning-of-flowers/carnation.png"));
+        //wishArraylist.add(new Product_details(2,"Jannat","233","https://assets.teleflora.com/images/customhtml/meaning-of-flowers/carnation.png"));
         wishlistAdpaater = new WishListAdapter(getActivity(), wishArraylist);
         wishlistRv.setAdapter(wishlistAdpaater);
         wishlistRv.addOnItemTouchListener(

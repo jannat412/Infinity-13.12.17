@@ -9,8 +9,8 @@ import android.os.Parcelable.Creator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.infinitymegamall.infinity.Billing;
-import com.infinitymegamall.infinity.LineItem;
-import com.infinitymegamall.infinity.Shipping;
+import com.infinitymegamall.infinity.pojo.LineItem;
+import com.infinitymegamall.infinity.pojo.Shipping;
 import com.infinitymegamall.infinity.ShippingLine;
 
 public class Pojo implements Serializable, Parcelable
@@ -61,7 +61,7 @@ public class Pojo implements Serializable, Parcelable
         this.setPaid = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
         this.billing = ((Billing) in.readValue((Billing.class.getClassLoader())));
         this.shipping = ((Shipping) in.readValue((Shipping.class.getClassLoader())));
-        in.readList(this.lineItems, (com.infinitymegamall.infinity.LineItem.class.getClassLoader()));
+        in.readList(this.lineItems, (com.infinitymegamall.infinity.pojo.LineItem.class.getClassLoader()));
         in.readList(this.shippingLines, (com.infinitymegamall.infinity.ShippingLine.class.getClassLoader()));
     }
 

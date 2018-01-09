@@ -1,5 +1,5 @@
 
-package com.infinitymegamall.infinity;
+package com.infinitymegamall.infinity.pojo;
 
 import java.io.Serializable;
 import android.os.Parcel;
@@ -38,7 +38,7 @@ public class LineItem implements Serializable, Parcelable
     ;
     private final static long serialVersionUID = -2959192182010650556L;
 
-    protected LineItem(Parcel in) {
+    public LineItem(Parcel in) {
         this.productId = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.quantity = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.variationId = ((Integer) in.readValue((Integer.class.getClassLoader())));

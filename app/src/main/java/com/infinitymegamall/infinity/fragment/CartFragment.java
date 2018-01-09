@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,10 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -37,12 +40,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.infinitymegamall.infinity.Billing;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
-import com.infinitymegamall.infinity.Shipping;
+import com.infinitymegamall.infinity.pojo.Shipping;
 import com.infinitymegamall.infinity.adapter.CartListAdapter;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
 import com.infinitymegamall.infinity.adapter.WishListAdapter;
@@ -51,6 +56,8 @@ import com.infinitymegamall.infinity.model.Cartproduct;
 import com.infinitymegamall.infinity.model.Gallery;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.Product_details;
+import com.infinitymegamall.infinity.model.UserProfile;
+import com.infinitymegamall.infinity.pojo.LineItem;
 import com.infinitymegamall.infinity.pojo.Pojo;
 
 import org.json.JSONArray;
@@ -62,6 +69,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -74,6 +82,10 @@ public class CartFragment extends Fragment{
     private RecyclerView cartRV;
     private static RecyclerView.Adapter cartListAdapter;
 
+    public FragmentTransaction fragmentTransaction;
+    public FragmentManager fragmentManager;
+    private UserProfileFragment userProfileFragment;
+
     private ProgressBar cart_progressbar;
     private String url ="https://infinitymegamall.com/wp-json/wc/v2/products?include=";
     private String order_url ="https://infinitymegamall.com/wp-json/wc/v2/orders";
@@ -85,6 +97,8 @@ public class CartFragment extends Fragment{
     private View v;
     private Gson gsonInstance;
     private Button buy_now;
+    private UserProfile user;
+    TextView result ;
 
     public CartFragment() {
     }
@@ -116,14 +130,29 @@ public class CartFragment extends Fragment{
 
         v = getActivity().findViewById(R.id.home_activity_id);
         cart_progressbar = (ProgressBar) getActivity().findViewById(R.id.cart_progressbar);
-
+        //result = (TextView) getActivity().findViewById(R.id.textView3);
         buy_now =(Button) getActivity().findViewById(R.id.buy_button);
         buy_now.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Snackbar.make(v,"buy click",Snackbar.LENGTH_SHORT).show();
+                loadUserdata();
+                UserProfile obj = new UserProfile(user.getFisrtName(),user.getLastName(),user.getDistrict(),user.getCity(),user.getStreetAddress(),user.getEmail(),user.getMobile());
+                List<LineItem> list = new ArrayList<>();
+                if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
+                    Snackbar.make(v,"Cart is empty",Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                for(int i=0;i<cartlocalArrayList.size();i++){
+                    list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
+                }
+                product_buy_request(obj,list);
             }
         });
+
+        if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
+            buy_now.setVisibility(View.GONE);
+        }
 
         cartRV =(RecyclerView) getActivity().findViewById(R.id.cartRecycler);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -170,6 +199,22 @@ public class CartFragment extends Fragment{
         makeCartList();
     }
 
+    public void loadUserdata(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
+        gsonInstance = new Gson();
+        if(sharedPreferences.contains("user")){
+            String json = sharedPreferences.getString("user",null);
+            Type type = new TypeToken<UserProfile>(){}.getType();
+            user = gsonInstance.fromJson(json,type);
+        }else {
+            Snackbar.make(v,"user",Snackbar.LENGTH_LONG).show();
+            userProfileFragment = new UserProfileFragment();
+            fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
+            fragmentTransaction.commit();
+        }
+    }
     public void loaddata(){
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
         gsonInstance = new Gson();
@@ -276,33 +321,36 @@ public class CartFragment extends Fragment{
 
     }
 
-    public void product_buy_request(){
+    public void product_buy_request(UserProfile user,List<LineItem> list){
         Pojo obj = new Pojo();
-        obj.setShipping(new Shipping("","","","","","","",""));
-        obj.setBilling(new Billing("","","","","","","","","",""));
+        obj.setPaymentMethod("cash on delivery");
+        obj.setPaymentMethodTitle("cash on delivery");
+        obj.setLineItems(list);
+        obj.setShipping(new Shipping(user.getFisrtName(),user.getLastName(),user.getStreetAddress(),user.getStreetAddress(),user.getCity(),user.getDistrict(),"","bangladesh"));
+        obj.setBilling(new Billing(user.getFisrtName(),user.getLastName(),user.getStreetAddress(),user.getStreetAddress(),user.getCity(),user.getDistrict(),"","bangladesh",user.getEmail(),user.getMobile()));
         gsonInstance = new Gson();
         String Json = gsonInstance.toJson(obj);
+        JSONObject objjj = null;
         try {
-            JSONObject jsonobj = new JSONObject(Json);
+            objjj = new JSONObject(Json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,url,null,
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,order_url,objjj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-
+                        Snackbar.make(v,"Order placed you will receive a call soon",Snackbar.LENGTH_LONG).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"error order did not placed",Snackbar.LENGTH_SHORT).show();
 
 
             }
@@ -320,40 +368,14 @@ public class CartFragment extends Fragment{
             }
 
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
-                    if (cacheEntry == null) {
-                        cacheEntry = new Cache.Entry();
-                    }
-                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
-                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
-                    long now = System.currentTimeMillis();
-                    final long softExpire = now + cacheHitButRefreshed;
-                    final long ttl = now + cacheExpired;
-                    cacheEntry.data = response.data;
-                    cacheEntry.softTtl = softExpire;
-                    cacheEntry.ttl = ttl;
-                    String headerValue;
-                    headerValue = response.headers.get("Date");
-                    if (headerValue != null) {
-                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    headerValue = response.headers.get("Last-Modified");
-                    if (headerValue != null) {
-                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    cacheEntry.responseHeaders = response.headers;
-                    final String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers));
-                    return Response.success(new JSONObject(jsonString), cacheEntry);
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException e) {
-                    return Response.error(new ParseError(e));
+                if(response.statusCode==404 ||response.statusCode==500){
+                    Snackbar.make(v,"not found or internal server error",Snackbar.LENGTH_SHORT).show();
                 }
+                return super.parseNetworkResponse(response);
             }
         };
-
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 

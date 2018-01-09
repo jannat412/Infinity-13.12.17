@@ -310,7 +310,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         productDetailsList.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), productDetailsList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Snackbar.make(v,newProductDetails.get(position).getProduct_image(),Snackbar.LENGTH_LONG).show();
+                        //Snackbar.make(v,newProductDetails.get(position).getProduct_image(),Snackbar.LENGTH_LONG).show();
                         int productId = newProductDetails.get(position).getId();
                         Bundle bundle = new Bundle();
                         bundle.putInt("productId",productId);
@@ -341,7 +341,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         bestsellerDetailList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), bestsellerDetailList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Snackbar.make(v,bestSellerProductDetailsArrayList.get(position).getProduct_name(),Snackbar.LENGTH_LONG).show();
+                //Snackbar.make(v,bestSellerProductDetailsArrayList.get(position).getProduct_name(),Snackbar.LENGTH_LONG).show();
                 int productId = bestSellerProductDetailsArrayList.get(position).getId();
                 Bundle bundle = new Bundle();
                 bundle.putInt("productId",productId);
@@ -423,7 +423,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"home fragment error",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"Check internet connection",Snackbar.LENGTH_LONG).show();
 
             }
         }){
@@ -474,8 +474,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             }
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
@@ -789,7 +787,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Toast.makeText(getActivity(), slider.getBundle().get("extra")+ "", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getActivity(), slider.getBundle().get("extra")+ "", Toast.LENGTH_SHORT).show();
 
     }
 
