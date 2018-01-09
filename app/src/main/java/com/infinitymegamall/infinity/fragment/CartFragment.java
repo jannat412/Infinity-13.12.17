@@ -4,12 +4,15 @@ package com.infinitymegamall.infinity.fragment;
  * Created by shuvo on 03-Jan-18.
  */
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -59,12 +62,15 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
 
 public class CartFragment extends Fragment{
 
+    FragmentTransaction transaction;
+    private ProductDetailViewFragment productDetailViewFragment;
     private RecyclerView cartRV;
     private static ArrayList<Cartproduct> cartproductArrayList;
     private static RecyclerView.Adapter cartListAdapter;
@@ -133,12 +139,34 @@ public class CartFragment extends Fragment{
         cartRV.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), cartRV ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Toast.makeText(getContext(), cartArrayList.get(position).getProductName(), Toast.LENGTH_SHORT).show();
-
+                        int productId = Integer.parseInt(cartArrayList.get(position).getProductId());
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("productId",productId);
+                        productDetailViewFragment = new ProductDetailViewFragment();
+                        productDetailViewFragment.setArguments(bundle);
+                        transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                        transaction.addToBackStack("ProductDetailViewFragment");
+                        transaction.commit();
                     }
 
-                    @Override public void onLongItemClick(View view, int position) {
+                    @Override public void onLongItemClick(View view, final int position) {
                         // do whatever
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle("Delete item")
+                                .setMessage("Remove product from list" )
+                                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        cartArrayList.remove(position);
+                                        cartlocalArrayList.remove(position);
+                                        cartListAdapter.notifyItemRemoved(position);
+                                        cartListAdapter.notifyItemRangeChanged(position,cartArrayList.size());
+                                        savedata();
+                                    }
+                                });
+
+                        builder.create().show();
                     }
                 })
         );
@@ -166,6 +194,22 @@ public class CartFragment extends Fragment{
         editor.apply();
     }
 
+    public void deletedata(String id){
+        outerloop:
+        for(int i = 0;i<cartlocalArrayList.size();i++){
+            String pid = cartlocalArrayList.get(i).getProductId();
+            String cid = cartArrayList.get(i).getProductId();
+            if(pid == id && cid == id){
+                cartlocalArrayList.remove(i);
+                cartArrayList.remove(i);
+                break outerloop;
+            }
+        }
+        cartListAdapter.notifyDataSetChanged();
+        savedata();
+        Snackbar.make(v,"Item deleted",Snackbar.LENGTH_SHORT).show();
+    }
+
     public void makeCartList(){
 
         String request_url =url;
@@ -173,7 +217,7 @@ public class CartFragment extends Fragment{
             for (int i = 0; i < cartlocalArrayList.size(); i++) {
                 String id =cartlocalArrayList.get(i).getProductId();
                 request_url +=id+",";
-                Toast.makeText(getContext(), request_url, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), request_url, Toast.LENGTH_SHORT).show();
             }
             product_details_api_request(request_url);
         }

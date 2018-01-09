@@ -38,7 +38,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        ImageView cartImage=holder.cartImage;
+        
         TextView cartProductName=holder.cartProductName;
         TextView cartProductPrice=holder.cartProductPrice;
         TextView cartProductQuantity=holder.cartProductQuantity;
@@ -51,9 +51,9 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
                 .crossFade()
                 .into(holder.cartImage);
         cartProductName.setText(cartArraylist.get(position).getProductName());
-        cartProductPrice.setText(cartArraylist.get(position).getProductPrie());
-        cartProductQuantity.setText(cartArraylist.get(position).getProductQuantity());
-        cartProductSize.setText(cartArraylist.get(position).getProductSize());
+        cartProductPrice.setText("price: "+cartArraylist.get(position).getProductPrie());
+        cartProductQuantity.setText("quantity: "+cartArraylist.get(position).getProductQuantity());
+        cartProductSize.setText("size: "+cartArraylist.get(position).getProductSize());
 
     }
 
@@ -65,6 +65,20 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public void removeItem(int position) {
+        cartArraylist.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Cartproduct item, int position) {
+        cartArraylist.add(position, item);
+        // notify item added by position
+        notifyItemInserted(position);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

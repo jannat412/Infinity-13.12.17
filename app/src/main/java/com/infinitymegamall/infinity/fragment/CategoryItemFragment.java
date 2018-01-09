@@ -181,8 +181,8 @@ public class CategoryItemFragment extends Fragment {
                 new RecyclerItemClickListener(getActivity(), catfag_product_grid ,new RecyclerItemClickListener.OnItemClickListener(){
                     @Override
                     public void onItemClick(View view, int position) {
-                        String s= catfag_product_list.get(position).getProduct_image();
-                        Snackbar.make(v,s,Snackbar.LENGTH_LONG).show();
+                        //String s= catfag_product_list.get(position).getProduct_image();
+                        //Snackbar.make(v,s,Snackbar.LENGTH_LONG).show();
                         int productId = catfag_product_list.get(position).getId();
                         Bundle bundle = new Bundle();
                         bundle.putInt("productId",productId);
