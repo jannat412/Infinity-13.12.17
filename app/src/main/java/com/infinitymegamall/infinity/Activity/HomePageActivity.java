@@ -210,7 +210,7 @@ public class HomePageActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"home activity error",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"Unable to load category",Snackbar.LENGTH_LONG).show();
 
             }
         }){
@@ -287,10 +287,10 @@ public class HomePageActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_search) {
-
+        if (id == R.id.action_cart) {
+            cart();
             return true;
-        }/*else if (id == R.id.action_cart) {
+        }/*else if (id == R.id.action_search) {
 
             return true;
         }*/
@@ -314,7 +314,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-    public void cart(View view){
+    public void cart(){
         cartFragment = new CartFragment();
         fragmentManager =getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();

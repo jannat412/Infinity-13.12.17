@@ -14,9 +14,9 @@
           android:id="@+id/productdetails_swiperefresh"
           android:layout_width="match_parent"
           android:layout_height="wrap_content">
-      <!--<ScrollView
+      <ScrollView
           android:layout_width="match_parent"
-          android:layout_height="match_parent">-->
+          android:layout_height="match_parent">
           <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -31,15 +31,12 @@
                       android:layout_height="300dp"
                       android:src="@drawable/loading" />
 
-                <!--  <ImageView
+                  <ImageView
                       android:id="@+id/frvt"
                       android:layout_width="40dp"
                       android:layout_height="40dp"
-                      android:layout_alignParentBottom="true"
-                      android:layout_alignParentEnd="true"
                       android:layout_alignParentRight="true"
-                      android:layout_marginRight="50dp"
-                      android:src="@drawable/fvt_gray" />-->
+                      android:src="@drawable/fvt_gray" />
               </RelativeLayout>
 
               <RelativeLayout
@@ -173,8 +170,7 @@
 
 
 
-<!--
-      </ScrollView>-->
+      </ScrollView>
       </android.support.v4.widget.SwipeRefreshLayout>
 
   </LinearLayout>

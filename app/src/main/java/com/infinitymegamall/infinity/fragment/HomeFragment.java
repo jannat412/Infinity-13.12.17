@@ -209,7 +209,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         categorylistView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), categorylistView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
+                        //Snackbar.make(v,categories.get(position).getCategoryName(),Snackbar.LENGTH_LONG).show();
                         Bundle bundle = new Bundle();
                         int id= categories.get(position).getId();
                         bundle.putInt("category",id);
@@ -262,7 +262,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         newarrivalList.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), newarrivalList ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        String men_product_url =main_url+String.valueOf(newArrivals.get(position).getId());;
+                        String men_product_url =main_url+String.valueOf(newArrivals.get(position).getId());
                         product_details_api_request(men_product_url);
 
                     }

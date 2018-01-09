@@ -76,6 +76,7 @@ public class CategoryItemFragment extends Fragment {
     private int visibleThreshold = 18;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
+    int inc =1;
 
     String a ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=18&category=";
     String c = "category=269&";
@@ -142,7 +143,7 @@ public class CategoryItemFragment extends Fragment {
                     public void onItemClick(View view, int position) {
 
                         String sub_cat_id = category_arraylist.get(position).getCategoryName();
-                        Snackbar.make(v,sub_cat_id,Snackbar.LENGTH_LONG).show();
+                        //Snackbar.make(v,sub_cat_id,Snackbar.LENGTH_LONG).show();
                         //Snackbar.make(v,category_id,Snackbar.LENGTH_LONG).show();
                         if(sub_cat_id=="All"){
                             //catfag_product_list.clear();
@@ -213,22 +214,22 @@ public class CategoryItemFragment extends Fragment {
                     // End has been reached
                     // Do something
                     //Snackbar.make(v," condition grid scroll",Snackbar.LENGTH_LONG).show();
-
-                    String a = products_pagination_url+2;
-                    //product_details_api_request(a);
+                    inc++;
+                    String a = category_id+"&page="+inc;
+                    product_details_api_request(a);
                     //loading = true;
                 }
             }
         });
 
-        product_details_api_request(category_id);
+        product_details_api_request(category_id+"&page=1");
     }
 
 
     public void subcategories_api_request(String postfix){
 
         String subcat_url=main_url+postfix;
-        String cat = main_url+"34";
+        //String cat = main_url+"34";
         // Creating volley request obj
         category_fragment_progressbar.setVisibility(View.VISIBLE);
 

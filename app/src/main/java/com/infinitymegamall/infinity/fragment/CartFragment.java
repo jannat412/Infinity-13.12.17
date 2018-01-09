@@ -72,7 +72,6 @@ public class CartFragment extends Fragment{
     FragmentTransaction transaction;
     private ProductDetailViewFragment productDetailViewFragment;
     private RecyclerView cartRV;
-    private static ArrayList<Cartproduct> cartproductArrayList;
     private static RecyclerView.Adapter cartListAdapter;
 
     private ProgressBar cart_progressbar;
@@ -98,7 +97,6 @@ public class CartFragment extends Fragment{
             productId = getArguments().getString("productid");
             productSize = getArguments().getString("productsize");
             productQuantity = getArguments().getString("productquantity");
-
             cartlocalArrayList.add(new Cart(productId,productSize,productQuantity));
 
             savedata();
@@ -132,8 +130,6 @@ public class CartFragment extends Fragment{
         cartRV.setHasFixedSize(true);
         cartRV.setLayoutManager(layoutManager1);
         cartArrayList = new ArrayList<>();
-        /*cartArrayList.add(new Cartproduct("2","Jannat","https://assets.teleflora.com/images/customhtml/meaning-of-flowers/carnation.png",
-                "2","XXl","5"));*/
         cartListAdapter = new CartListAdapter(getActivity(), cartArrayList);
         cartRV.setAdapter(cartListAdapter);
         cartRV.addOnItemTouchListener(
@@ -194,22 +190,6 @@ public class CartFragment extends Fragment{
         editor.apply();
     }
 
-    public void deletedata(String id){
-        outerloop:
-        for(int i = 0;i<cartlocalArrayList.size();i++){
-            String pid = cartlocalArrayList.get(i).getProductId();
-            String cid = cartArrayList.get(i).getProductId();
-            if(pid == id && cid == id){
-                cartlocalArrayList.remove(i);
-                cartArrayList.remove(i);
-                break outerloop;
-            }
-        }
-        cartListAdapter.notifyDataSetChanged();
-        savedata();
-        Snackbar.make(v,"Item deleted",Snackbar.LENGTH_SHORT).show();
-    }
-
     public void makeCartList(){
 
         String request_url =url;
@@ -221,7 +201,6 @@ public class CartFragment extends Fragment{
             }
             product_details_api_request(request_url);
         }
-
 
     }
 
