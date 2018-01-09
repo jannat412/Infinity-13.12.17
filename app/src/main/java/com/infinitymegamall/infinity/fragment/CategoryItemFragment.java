@@ -94,8 +94,7 @@ public class CategoryItemFragment extends Fragment {
         if (getArguments() != null) {
             category = getArguments().getInt("category");
             category_id = Integer.toString(category);
-            Toast.makeText(getActivity(),category_id,
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(),category_id,Toast.LENGTH_LONG).show();
 
         }
     }
@@ -268,7 +267,7 @@ public class CategoryItemFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 category_fragment_progressbar.setVisibility(View.GONE);
-                Snackbar.make(v,"home activity error",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
 
             }
         }){
