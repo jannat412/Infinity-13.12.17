@@ -361,6 +361,7 @@ public class CartFragment extends Fragment{
                         Snackbar.make(v,"Order placed you will receive a call soon",Snackbar.LENGTH_LONG).show();
                         cartlocalArrayList.clear();
                         cartArrayList.clear();
+                        savedata();
                         cartListAdapter.notifyDataSetChanged();
 
                     }
