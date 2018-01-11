@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.infinitymegamall.infinity.R;
+import com.infinitymegamall.infinity.model.Cartproduct;
 import com.infinitymegamall.infinity.model.Product_details;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.MyViewHolder>{
 
     Context c;
-    private ArrayList<Product_details> wishArrayList;
+    private ArrayList<Cartproduct> wishArrayList;
 
     @Override
     public WishListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -33,18 +34,22 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        ImageView wishImage = holder.wishImage;
         TextView wishProductName = holder.wishProductName;
         TextView wishProductPrice = holder.wishProductPrice;
+        TextView wishProductSize = holder.wishProductSize;
+        TextView wishProductQuantity = holder.wishProductQuantity;
 
         Glide.with(c)
-             .load(wishArrayList.get(position).getProduct_image())
+             .load(wishArrayList.get(position).getProductImage())
              .centerCrop()
              .placeholder(R.drawable.loading)
              .crossFade()
              .into(holder.wishImage);
-        wishProductName.setText(wishArrayList.get(position).getProduct_name());
-        wishProductPrice.setText(wishArrayList.get(position).getProduct_price());
+
+        wishProductName.setText(wishArrayList.get(position).getProductName());
+        wishProductPrice.setText(wishArrayList.get(position).getProductPrie());
+        wishProductQuantity.setText(wishArrayList.get(position).getProductQuantity());
+        wishProductSize.setText(wishArrayList.get(position).getProductSize());
     }
 
     @Override
@@ -62,15 +67,19 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.MyView
         ImageView wishImage;
         TextView wishProductName;
         TextView wishProductPrice;
+        TextView wishProductSize;
+        TextView wishProductQuantity;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.wishImage = (ImageView) itemView.findViewById(R.id.wish_image);
             this.wishProductName = (TextView) itemView.findViewById(R.id.wish_name);
             this.wishProductPrice = (TextView) itemView.findViewById(R.id.wish_price);
+            this.wishProductSize = (TextView) itemView.findViewById(R.id.wish_size);
+            this.wishProductQuantity = (TextView) itemView.findViewById(R.id.wish_quantity);
         }
     }
 
-    public WishListAdapter(Context c, ArrayList<Product_details> wishArrayList) {
+    public WishListAdapter(Context c, ArrayList<Cartproduct> wishArrayList) {
         this.c = c;
         this.wishArrayList = wishArrayList;
     }

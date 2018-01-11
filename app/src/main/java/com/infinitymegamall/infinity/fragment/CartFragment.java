@@ -135,18 +135,32 @@ public class CartFragment extends Fragment{
         buy_now.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v,"buy click",Snackbar.LENGTH_SHORT).show();
-                loadUserdata();
-                UserProfile obj = new UserProfile(user.getFisrtName(),user.getLastName(),user.getDistrict(),user.getCity(),user.getStreetAddress(),user.getEmail(),user.getMobile());
-                List<LineItem> list = new ArrayList<>();
-                if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
-                    Snackbar.make(v,"Cart is empty",Snackbar.LENGTH_LONG).show();
-                    return;
+
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
+                gsonInstance = new Gson();
+                if(sharedPreferences.contains("user")){
+                    String json = sharedPreferences.getString("user",null);
+                    Type type = new TypeToken<UserProfile>(){}.getType();
+                    user = gsonInstance.fromJson(json,type);
+                    List<LineItem> list = new ArrayList<>();
+                    if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
+                        Snackbar.make(v,"Cart is empty",Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    for(int i=0;i<cartlocalArrayList.size();i++){
+                        list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
+                    }
+                    product_buy_request(user,list);
                 }
-                for(int i=0;i<cartlocalArrayList.size();i++){
-                    list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
+                else {
+                    Snackbar.make(v,"fill up user info",Snackbar.LENGTH_LONG).show();
+                    userProfileFragment = new UserProfileFragment();
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
+                    fragmentTransaction.commit();
                 }
-                product_buy_request(obj,list);
+
             }
         });
 
@@ -206,8 +220,9 @@ public class CartFragment extends Fragment{
             String json = sharedPreferences.getString("user",null);
             Type type = new TypeToken<UserProfile>(){}.getType();
             user = gsonInstance.fromJson(json,type);
-        }else {
-            Snackbar.make(v,"user",Snackbar.LENGTH_LONG).show();
+        }
+        else {
+            Snackbar.make(v,"fill up user info",Snackbar.LENGTH_LONG).show();
             userProfileFragment = new UserProfileFragment();
             fragmentManager = getActivity().getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();

@@ -79,7 +79,6 @@ public class CategoryItemFragment extends Fragment {
     int inc =1;
 
     String a ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=18&category=";
-    String c = "category=269&";
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
     String products_pagination_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16&page=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
@@ -323,7 +322,7 @@ public class CategoryItemFragment extends Fragment {
     }
 
     public void product_details_api_request(String postfix){
-        catfag_product_list.clear();
+        //catfag_product_list.clear();
         category_fragment_progressbar.setVisibility(View.VISIBLE);
         String api= a+postfix;
         // Creating volley request obj

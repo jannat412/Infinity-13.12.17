@@ -14,6 +14,7 @@ import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
 import com.infinitymegamall.infinity.adapter.WishListAdapter;
+import com.infinitymegamall.infinity.model.Cartproduct;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.Product_details;
 
@@ -28,7 +29,7 @@ import static com.infinitymegamall.infinity.R.layout.wishlist_fragment;
 public class WishlistFragment extends Fragment {
 
     private RecyclerView wishlistRv;
-    private static ArrayList<Product_details> wishArraylist;
+    private static ArrayList<Cartproduct> wishArraylist;
     private static RecyclerView.Adapter wishlistAdpaater;
 
     public WishlistFragment() {
@@ -60,7 +61,7 @@ public class WishlistFragment extends Fragment {
         wishlistRv.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), wishlistRv ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Toast.makeText(getContext(), wishArraylist.get(position).getProduct_name(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), wishArraylist.get(position).getProductName(), Toast.LENGTH_SHORT).show();
 
                     }
 

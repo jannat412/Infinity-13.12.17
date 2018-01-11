@@ -23,7 +23,8 @@
               android:orientation="vertical">
               <RelativeLayout
                   android:layout_width="wrap_content"
-                  android:layout_height="wrap_content">
+                  android:layout_height="wrap_content"
+                  android:background="?android:attr/selectableItemBackground">
                   <ImageView
                       android:id="@+id/galleryView"
                       android:layout_gravity="center"

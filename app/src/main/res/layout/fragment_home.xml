@@ -168,10 +168,6 @@
                             android:layout_height="wrap_content">
                         </android.support.v7.widget.RecyclerView>
                     </LinearLayout>
-                    <View
-                        android:layout_width="match_parent"
-                        android:background="@android:color/darker_gray"
-                        android:layout_height="1dp"/>
                     <ProgressBar
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -229,10 +225,7 @@
                             android:layout_height="wrap_content">
                         </android.support.v7.widget.RecyclerView>
                     </LinearLayout>
-                    <View
-                        android:layout_width="match_parent"
-                        android:background="@android:color/darker_gray"
-                        android:layout_height="1dp"/>
+
                     <ProgressBar
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
