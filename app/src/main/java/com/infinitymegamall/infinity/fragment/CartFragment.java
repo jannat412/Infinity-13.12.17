@@ -230,6 +230,7 @@ public class CartFragment extends Fragment{
             fragmentTransaction.commit();
         }
     }
+
     public void loaddata(){
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
         gsonInstance = new Gson();
@@ -257,7 +258,6 @@ public class CartFragment extends Fragment{
             for (int i = 0; i < cartlocalArrayList.size(); i++) {
                 String id =cartlocalArrayList.get(i).getProductId();
                 request_url +=id+",";
-                //Toast.makeText(getContext(), request_url, Toast.LENGTH_SHORT).show();
             }
             product_details_api_request(request_url);
         }
@@ -359,13 +359,17 @@ public class CartFragment extends Fragment{
                     public void onResponse(JSONObject response) {
 
                         Snackbar.make(v,"Order placed you will receive a call soon",Snackbar.LENGTH_LONG).show();
+                        cartlocalArrayList.clear();
+                        cartArrayList.clear();
+                        cartListAdapter.notifyDataSetChanged();
+
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"error order did not placed",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(v,"Error order did not placed",Snackbar.LENGTH_LONG).show();
 
 
             }

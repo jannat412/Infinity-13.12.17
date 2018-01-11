@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +43,12 @@ import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
 import com.infinitymegamall.infinity.adapter.CategorylistAdapter;
 import com.infinitymegamall.infinity.adapter.GalleryImageAdapter;
+import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
+import com.infinitymegamall.infinity.adapter.RelatedProductsAdapter;
+import com.infinitymegamall.infinity.model.Cartproduct;
 import com.infinitymegamall.infinity.model.Gallery;
 import com.infinitymegamall.infinity.model.HomeCategory;
+import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.Product_details;
 
 import org.json.JSONArray;
@@ -63,21 +69,33 @@ public class ProductDetailViewFragment extends Fragment {
     private RecyclerView galler_list;
     private static ArrayList<Gallery> galleries;
     private static RecyclerView.Adapter galleryAdapter;
+
+    private RecyclerView relatedProductsRecycler;
+    private RecyclerView.Adapter relatedProductsAdapter;
+    private ArrayList<Product_details> relatedProductsArraylist;
+
     private ImageView galleryView;
     private TextView product_name, product_price,product_description,product_variation;
     private static String productId="",productsize="",productquantity="";
     private View v;
+    private static String url ="https://infinitymegamall.com/wp-json/wc/v2/products?include=";
+    private static String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
     private static String producyURL ="https://infinitymegamall.com/wp-json/wc/v2/products/";
     private static String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     private static String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
     Spinner spinner_size,spinner_quantity ;
     List<String> sizes;
+    List<String> related_product_ids;
     ArrayAdapter<String> size_Adapter;
     ArrayAdapter<CharSequence> quantity_Adapter;
     private CartFragment cartFragment;
+    private WishlistFragment wishFragment;
+    private ProductDetailViewFragment productDetailViewFragment;
     FragmentTransaction transaction;
     private Button addtocart;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ImageView heart;
+    private ProgressBar related_products_progessbar;
 
 
     public ProductDetailViewFragment() {
@@ -115,12 +133,21 @@ public class ProductDetailViewFragment extends Fragment {
                     public void onRefresh() {
                         sizes.clear();
                         galleries.clear();
+                        relatedProductsArraylist.clear();
                         product_request(producyURL+productId);
+                        makeRelatedProductsList();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );
 
+        heart = (ImageView) getActivity().findViewById(R.id.heart);
+        heart.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Snackbar.make(v,"heart",Snackbar.LENGTH_LONG).show();
+                addtoWishList();
+            }
+        });
         galleryView = (ImageView)getActivity().findViewById(R.id.galleryView);
         galler_list = (RecyclerView) getActivity().findViewById(R.id.galler_list);
 
@@ -129,9 +156,9 @@ public class ProductDetailViewFragment extends Fragment {
         product_description = (TextView) getActivity().findViewById(R.id.product_description);
         product_variation = (TextView) getActivity().findViewById(R.id.product_variation);
 
-
         spinner_size = (Spinner) getActivity().findViewById(R.id.size_spinner);
         sizes = new ArrayList<String>();
+        related_product_ids = new ArrayList<String>();
         size_Adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, sizes);
         size_Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_size.setAdapter(size_Adapter);
@@ -177,9 +204,40 @@ public class ProductDetailViewFragment extends Fragment {
                     }
                 })
         );
+        related_products_progessbar = (ProgressBar) getActivity().findViewById(R.id.related_products_progressbar);
+        relatedProductsRecycler =(RecyclerView)getActivity().findViewById(R.id.related_products_RV);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        relatedProductsRecycler.setHasFixedSize(true);
+        relatedProductsRecycler.setLayoutManager(layoutManager1);
+        relatedProductsArraylist = new ArrayList<>();
+        relatedProductsArraylist.add(new Product_details(2,"jannat","ghhghgh","https://mir-s3-cdn-cf.behance.net/project_modules/1400/1d8eb023364561.56c46f861a30d.jpg"));
+        relatedProductsAdapter = new RelatedProductsAdapter(getActivity(), relatedProductsArraylist);
+        relatedProductsRecycler.setAdapter(relatedProductsAdapter);
+        relatedProductsRecycler.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), relatedProductsRecycler ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        int productId = relatedProductsArraylist.get(position).getId();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("productId",productId);
+                        productDetailViewFragment = new ProductDetailViewFragment();
+                        productDetailViewFragment.setArguments(bundle);
+                        transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.child_fragment_container, productDetailViewFragment);
+                        transaction.addToBackStack("ProductDetailViewFragment");
+                        transaction.commit();
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
         product_request(producyURL+productId);
+        makeRelatedProductsList();
+
     }
+
 
     public void product_request(String url){
 
@@ -233,10 +291,10 @@ public class ProductDetailViewFragment extends Fragment {
                             }
 
                             JSONArray relatedProductArray = response.getJSONArray("related_ids");
-                            if(relatedProductArray!=null &&relatedProductArray.length()>0){
+                            if(relatedProductArray!=null && relatedProductArray.length()>0){
                                 for(int j=0;j<relatedProductArray.length();j++){
 
-                                    String id = relatedProductArray.getString(j);
+                                    related_product_ids.add(relatedProductArray.getString(j));
                                     //Snackbar.make(v,id+"somthing",Snackbar.LENGTH_SHORT).show();
                                 }
                             }
@@ -311,8 +369,8 @@ public class ProductDetailViewFragment extends Fragment {
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
-    }
 
+    }
 
 
     public void addtocart(){
@@ -322,7 +380,7 @@ public class ProductDetailViewFragment extends Fragment {
             productquantity = (String)spinner_quantity.getSelectedItem();
             productsize = (String)spinner_size.getSelectedItem();
 
-            Snackbar.make(v,productquantity+" "+productsize,Snackbar.LENGTH_LONG).show();
+            //Snackbar.make(v,productquantity+" "+productsize,Snackbar.LENGTH_LONG).show();
             Bundle bundle = new Bundle();
             bundle.putString("productquantity",productquantity);
             bundle.putString("productsize",productsize);
@@ -336,7 +394,7 @@ public class ProductDetailViewFragment extends Fragment {
 
         }
         else if(spinner_size.getSelectedItem() == null && spinner_quantity.getSelectedItem() != null ){
-            Snackbar.make(v,"size is default",Snackbar.LENGTH_LONG).show();
+            //Snackbar.make(v,"size is default",Snackbar.LENGTH_LONG).show();
             productquantity = (String) spinner_quantity.getSelectedItem();
             productsize = "default";
 
@@ -357,6 +415,130 @@ public class ProductDetailViewFragment extends Fragment {
 
     }
 
+
+    public void addtoWishList(){
+
+        if( spinner_quantity.getSelectedItem() !=null && spinner_size.getSelectedItem() !=null ){
+            //Snackbar.make(v,"if condition true",Snackbar.LENGTH_LONG).show();
+            productquantity = (String)spinner_quantity.getSelectedItem();
+            productsize = (String)spinner_size.getSelectedItem();
+
+            //Snackbar.make(v,productquantity+" "+productsize,Snackbar.LENGTH_LONG).show();
+            Bundle bundle = new Bundle();
+            bundle.putString("productquantity",productquantity);
+            bundle.putString("productsize",productsize);
+            bundle.putString("productid",productId);
+            wishFragment = new WishlistFragment();
+            wishFragment.setArguments(bundle);
+            transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.child_fragment_container, wishFragment);
+            transaction.addToBackStack("WishlistFragment");
+            transaction.commit();
+
+        }
+        else if(spinner_size.getSelectedItem() == null && spinner_quantity.getSelectedItem() != null ){
+            //Snackbar.make(v,"size is default",Snackbar.LENGTH_LONG).show();
+            productquantity = (String) spinner_quantity.getSelectedItem();
+            productsize = "default";
+
+            Bundle bundle = new Bundle();
+            bundle.putString("productquantity",productquantity);
+            bundle.putString("productsize",productsize);
+            bundle.putString("productid",productId);
+            wishFragment = new WishlistFragment();
+            wishFragment.setArguments(bundle);
+            transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.child_fragment_container, wishFragment);
+            transaction.addToBackStack("WishlistFragment");
+            transaction.commit();
+        }
+        else {
+            Snackbar.make(v,"size or quantity is missing",Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void makeRelatedProductsList(){
+
+        String request_url =url;
+        if( related_product_ids!=null || related_product_ids.size()>0) {
+            for (int i = 0; i < related_product_ids.size(); i++) {
+                String id =related_product_ids.get(i);
+                request_url +=id+",";
+            }
+            Snackbar.make(v,request_url+"",Snackbar.LENGTH_LONG).show();
+            product_details_api_request(request_url);
+        }
+
+    }
+
+    public void product_details_api_request(String url){
+
+        related_products_progessbar.setVisibility(View.VISIBLE);
+
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                Product_details model = new Product_details();
+                                model.setId(obj.getInt("id"));
+                                model.setProduct_name(obj.getString("name"));
+                                model.setProduct_price(obj.getString("price"));
+                                JSONArray img = obj.getJSONArray("images");
+                                JSONObject item = img.getJSONObject(0);
+                                String image = item.getString("src");
+                                model.setProduct_image(image);
+                                // adding model to product details  array
+                                //Snackbar.make(v,"grid  "+model.getId(),Snackbar.LENGTH_SHORT).show();
+                                relatedProductsArraylist.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                                related_products_progessbar.setVisibility(View.GONE);
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        related_products_progessbar.setVisibility(View.GONE);
+                        relatedProductsAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                related_products_progessbar.setVisibility(View.GONE);
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
 
 }
 

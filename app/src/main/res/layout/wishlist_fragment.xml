@@ -4,6 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wishlist_progressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/wishlistRecycler"
         android:layout_width="match_parent"

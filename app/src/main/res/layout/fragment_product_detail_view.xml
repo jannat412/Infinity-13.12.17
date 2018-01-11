@@ -4,16 +4,12 @@
     android:layout_height="match_parent"
     tools:context="com.infinitymegamall.infinity.fragment.ProductDetailViewFragment">
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_margin="10dp"
-      android:orientation="vertical">
       <android.support.v4.widget.SwipeRefreshLayout
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:id="@+id/productdetails_swiperefresh"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/cardview_default_elevation">
       <ScrollView
           android:layout_width="match_parent"
           android:layout_height="match_parent">
@@ -33,7 +29,7 @@
                       android:src="@drawable/loading" />
 
                   <ImageView
-                      android:id="@+id/frvt"
+                      android:id="@+id/heart"
                       android:layout_width="40dp"
                       android:layout_height="40dp"
                       android:layout_alignParentRight="true"
@@ -160,12 +156,48 @@
                   android:maxLines="4"
                   android:lines="2"/>
 
-              <android.support.v7.widget.RecyclerView
-                  android:id="@+id/relatedproducts_recycler"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
 
-              </android.support.v7.widget.RecyclerView>
+              <android.support.v7.widget.CardView
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="center"
+                          android:gravity="left"
+                          android:orientation="horizontal">
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textStyle="bold"
+                              android:padding="5dp"
+                              android:layout_marginLeft="15dp"
+                              android:textColor="@color/red"
+                              android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                              android:text="Related products"/>
+                      </LinearLayout>
+
+                      <ProgressBar
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/related_products_progressbar"
+                          style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                          android:indeterminate="true"
+                          />
+                      <android.support.v7.widget.RecyclerView
+                          android:id="@+id/related_products_RV"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content">
+                      </android.support.v7.widget.RecyclerView>
+                  </LinearLayout>
+              </android.support.v7.widget.CardView>
+
+
           </LinearLayout>
 
 
@@ -174,6 +206,5 @@
       </ScrollView>
       </android.support.v4.widget.SwipeRefreshLayout>
 
-  </LinearLayout>
 
 </FrameLayout>
