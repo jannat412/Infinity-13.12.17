@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,59 +16,90 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="5dp"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/textView2"
+                android:padding="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:text="Customer profile"
                 android:gravity="center"/>
 
             <EditText
                 android:id="@+id/first_name"
+                android:padding="5dp"
+                android:background="@drawable/outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="First Name" />
 
             <EditText
                 android:id="@+id/last_name"
+                android:padding="5dp"
+                android:background="@drawable/outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Last Name" />
-
-            <EditText
-                android:id="@+id/district"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="District" />
-            <EditText
-                android:id="@+id/city"
-                android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-                android:hint="City" />
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/district"
+                    android:padding="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/outline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="District" />
+                <EditText
+                    android:id="@+id/city"
+                    android:padding="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/outline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="City" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/street_address"
+                android:padding="5dp"
+                android:background="@drawable/outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Street Address" />
 
             <EditText
                 android:id="@+id/email"
+                android:padding="5dp"
+                android:background="@drawable/outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"/>
 
             <EditText
                 android:id="@+id/phone"
+                android:padding="5dp"
+                android:background="@drawable/outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mobile Number" />
 
             <Button
                 android:id="@+id/user_button"
-                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:background="@drawable/outline"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Save details" />
@@ -76,4 +108,4 @@
     </ScrollView>
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
