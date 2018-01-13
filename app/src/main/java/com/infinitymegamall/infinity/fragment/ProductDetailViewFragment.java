@@ -144,7 +144,7 @@ public class ProductDetailViewFragment extends Fragment {
         heart = (ImageView) getActivity().findViewById(R.id.heart);
         heart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Snackbar.make(v,"heart",Snackbar.LENGTH_LONG).show();
+                //Snackbar.make(v,"heart",Snackbar.LENGTH_LONG).show();
                 addtoWishList();
             }
         });
@@ -210,7 +210,7 @@ public class ProductDetailViewFragment extends Fragment {
         relatedProductsRecycler.setHasFixedSize(true);
         relatedProductsRecycler.setLayoutManager(layoutManager1);
         relatedProductsArraylist = new ArrayList<>();
-        relatedProductsArraylist.add(new Product_details(2,"jannat","ghhghgh","https://mir-s3-cdn-cf.behance.net/project_modules/1400/1d8eb023364561.56c46f861a30d.jpg"));
+        //relatedProductsArraylist.add(new Product_details(2,"jannat","ghhghgh","https://mir-s3-cdn-cf.behance.net/project_modules/1400/1d8eb023364561.56c46f861a30d.jpg"));
         relatedProductsAdapter = new RelatedProductsAdapter(getActivity(), relatedProductsArraylist);
         relatedProductsRecycler.setAdapter(relatedProductsAdapter);
         relatedProductsRecycler.addOnItemTouchListener(
@@ -234,7 +234,6 @@ public class ProductDetailViewFragment extends Fragment {
         );
 
         product_request(producyURL+productId);
-        makeRelatedProductsList();
 
     }
 
@@ -300,10 +299,12 @@ public class ProductDetailViewFragment extends Fragment {
                             }
 
                             size_Adapter.notifyDataSetChanged();
+                            if(relatedProductArray!=null && relatedProductArray.length()>0)
+                                makeRelatedProductsList();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Snackbar.make(v,"jason parse vul hosse",Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(v,"Something went wrong",Snackbar.LENGTH_LONG).show();
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
@@ -466,7 +467,7 @@ public class ProductDetailViewFragment extends Fragment {
                 String id =related_product_ids.get(i);
                 request_url +=id+",";
             }
-            Snackbar.make(v,request_url+"",Snackbar.LENGTH_LONG).show();
+            //Snackbar.make(v,request_url+"",Snackbar.LENGTH_LONG).show();
             product_details_api_request(request_url);
         }
 

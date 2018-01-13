@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -37,13 +39,16 @@ import com.android.volley.toolbox.JsonRequest;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyData;
 import com.infinitymegamall.infinity.R;
+import com.infinitymegamall.infinity.adapter.Category_drawer_adapter;
 import com.infinitymegamall.infinity.adapter.NavigationCategoryAdapter;
 import com.infinitymegamall.infinity.fragment.CartFragment;
 import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
 import com.infinitymegamall.infinity.fragment.UserProfileFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
+import com.infinitymegamall.infinity.model.ChildCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
+import com.infinitymegamall.infinity.model.ParentCategory;
 import com.infinitymegamall.infinity.model.nv_category;
 
 import org.json.JSONArray;
@@ -53,6 +58,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
@@ -73,6 +79,10 @@ public class HomePageActivity extends AppCompatActivity
     private UserProfileFragment userProfileFragment;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    RecyclerView category;
+    List<ParentCategory> category_list;
+    Category_drawer_adapter category_adapter;
+
     View v;
 
     String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0";
@@ -91,7 +101,7 @@ public class HomePageActivity extends AppCompatActivity
 
         v = findViewById(R.id.home_activity_id);
 
-        listView = (ListView) findViewById(R.id.navigation_list);
+        //listView = (ListView) findViewById(R.id.navigation_list);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(
@@ -99,15 +109,21 @@ public class HomePageActivity extends AppCompatActivity
                     @Override
                     public void onRefresh() {
                         categories.clear();
-                        categories_api_request();
+                        //categories_api_request();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );
 
+        category = (RecyclerView) findViewById(R.id.category_nav_list);
+        category_list = new ArrayList<>();
+        makeCategory();
+        category_adapter = new Category_drawer_adapter(category_list);
+        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
+        category.setAdapter(category_adapter);
         categories = new ArrayList<>();
 
-        categories_api_request();
+        //categories_api_request();
 /*        for (int i = 0; i < MyData.category.length; i++) {
             categories.add(new nv_category(
                     MyData.category[i],
@@ -115,7 +131,7 @@ public class HomePageActivity extends AppCompatActivity
 
             ));
         }*/
-        adapter = new NavigationCategoryAdapter(this, categories);
+/*        adapter = new NavigationCategoryAdapter(this, categories);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,7 +151,7 @@ public class HomePageActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 //Toast.makeText(HomePageActivity.this, ""+categories.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -266,6 +282,17 @@ public class HomePageActivity extends AppCompatActivity
 
     }
 
+    public void makeCategory(){
+
+            List<ChildCategory> child = new ArrayList<>();
+            child.add(new ChildCategory("ddd",2));
+            child.add(new ChildCategory("sajhgbkasjd",4));
+            child.add(new ChildCategory("dsjbfj",5));
+            category_list.add(new ParentCategory("Shuvo",child));
+            category_list.add(new ParentCategory("jannat",child));
+            category_list.add(new ParentCategory("jannat",child));
+
+    }
 
     @Override
     public void onBackPressed() {
