@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Infinity</string>
+    <string name="title_activity_home_page"></string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_test">Test</string>
+    <string name="loading">loading</string>
+    <string name="nosize">No size</string>
+    <string name="Quan">Quanity</string>
+    <string name="brand">Brand Store</string>
+
+    <string-array name="quantity">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+</resources>

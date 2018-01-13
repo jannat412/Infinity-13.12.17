@@ -1,0 +1,211 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.infinitymegamall.infinity.fragment.ProductDetailViewFragment">
+
+      <android.support.v4.widget.SwipeRefreshLayout
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:id="@+id/productdetails_swiperefresh"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/cardview_default_elevation">
+      <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+              <RelativeLayout
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:background="?android:attr/selectableItemBackground">
+                  <ImageView
+                      android:id="@+id/galleryView"
+                      android:layout_gravity="center"
+                      android:layout_width="wrap_content"
+                      android:layout_height="300dp"
+                      android:src="@drawable/loading" />
+
+                  <ImageView
+                      android:id="@+id/heart"
+                      android:layout_width="40dp"
+                      android:layout_height="40dp"
+                      android:layout_alignParentRight="true"
+                      android:src="@drawable/fvt_gray" />
+              </RelativeLayout>
+
+              <RelativeLayout
+                  android:id="@+id/gallery_relative_layout"
+                  android:layout_width="350dp"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:orientation="horizontal">
+
+                  <ImageView
+                      android:id="@+id/left_arrow_imageview"
+                      android:layout_width="35dp"
+                      android:layout_height="35dp"
+                      android:layout_centerVertical="true"
+                      android:layout_marginLeft="1dip"
+                      android:src="@drawable/gray_icon_left" />
+                  <LinearLayout
+                      android:layout_toRightOf="@+id/left_arrow_imageview"
+                      android:layout_toLeftOf="@+id/right_arrow_imageview"
+                      android:layout_width="250dp"
+                      android:layout_height="wrap_content">
+                      <android.support.v7.widget.RecyclerView
+                          android:layout_width="match_parent"
+                          android:layout_height="100dp"
+                          android:id="@+id/galler_list">
+                      </android.support.v7.widget.RecyclerView>
+                  </LinearLayout>
+                  <ImageView
+                      android:id="@+id/right_arrow_imageview"
+                      android:layout_width="35dp"
+                      android:layout_height="35dp"
+                      android:layout_alignParentRight="true"
+                      android:layout_centerVertical="true"
+                      android:layout_marginRight="1dip"
+                      android:src="@drawable/gray_icon_right" />
+              </RelativeLayout>
+              <TextView
+                  android:id="@+id/product_name"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:textColor="@android:color/black"
+                  android:textStyle="bold"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                  android:text="@string/loading"/>
+              <TextView
+                  android:id="@+id/product_price"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="center"
+                  android:paddingBottom="5dp"
+                  android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                  android:text="@string/loading"
+                  android:textStyle="bold"
+                  android:textColor="@android:color/black" />
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="50dp"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:layout_marginBottom="10dp"
+                  android:orientation="horizontal"
+                  android:background="?android:attr/selectableItemBackground">
+
+                  <TextView
+                      android:id="@+id/product_variation"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                      android:text="@string/loading"
+                      android:textStyle="bold"
+                      android:textColor="@android:color/black" />
+                  <Spinner
+                      android:id="@+id/size_spinner"
+                      android:layout_width="70dp"
+                      android:layout_height="match_parent"
+                      android:padding="5dp"/>
+                  <TextView
+                      android:id="@+id/product_quantity"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                      android:text="@string/Quan"
+                      android:textStyle="bold"
+                      android:textColor="@android:color/black" />
+                  <Spinner
+                      android:id="@+id/quantity_spinner"
+                      android:layout_width="70dp"
+                      android:layout_height="match_parent"
+                      android:padding="5dp"/>
+
+                  <Button
+                      android:id="@+id/addtocart"
+                      android:layout_width="90dp"
+                      android:layout_height="match_parent"
+                      android:layout_gravity="left"
+                      android:background="@drawable/outline"
+                      android:gravity="center"
+                      android:paddingLeft="5dp"
+                      android:paddingRight="5dp"
+                      android:text="Add to Cart"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                      android:textColor="@android:color/black"
+                      android:textStyle="bold" />
+              </LinearLayout>
+              <TextView
+                  android:id="@+id/product_description"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:textColor="@android:color/black"
+                  android:textStyle="bold"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                  android:text="@string/loading"
+                  android:maxLines="4"
+                  android:lines="2"/>
+
+
+              <android.support.v7.widget.CardView
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="center"
+                          android:gravity="left"
+                          android:orientation="horizontal">
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textStyle="bold"
+                              android:padding="5dp"
+                              android:layout_marginLeft="15dp"
+                              android:textColor="@color/red"
+                              android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                              android:text="Related products"/>
+                      </LinearLayout>
+
+                      <ProgressBar
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/related_products_progressbar"
+                          style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                          android:indeterminate="true"
+                          />
+                      <android.support.v7.widget.RecyclerView
+                          android:id="@+id/related_products_RV"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content">
+                      </android.support.v7.widget.RecyclerView>
+                  </LinearLayout>
+              </android.support.v7.widget.CardView>
+
+
+          </LinearLayout>
+
+
+
+
+      </ScrollView>
+      </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</FrameLayout>
