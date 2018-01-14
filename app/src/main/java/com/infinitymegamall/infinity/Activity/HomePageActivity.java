@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -276,6 +277,8 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -368,7 +371,8 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
-        // Adding request to request queue
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 3, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
         category_list.add(new ParentCategory(cat,child));
 
