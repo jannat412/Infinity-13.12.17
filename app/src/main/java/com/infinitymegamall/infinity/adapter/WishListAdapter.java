@@ -47,9 +47,9 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.MyView
              .into(holder.wishImage);
 
         wishProductName.setText(wishArrayList.get(position).getProductName());
-        wishProductPrice.setText(wishArrayList.get(position).getProductPrie());
-        wishProductQuantity.setText(wishArrayList.get(position).getProductQuantity());
-        wishProductSize.setText(wishArrayList.get(position).getProductSize());
+        wishProductPrice.setText("price: ৳"+wishArrayList.get(position).getProductPrie());
+        wishProductQuantity.setText("quantity: "+wishArrayList.get(position).getProductQuantity());
+        wishProductSize.setText("size: "+wishArrayList.get(position).getProductSize());
     }
 
     @Override
