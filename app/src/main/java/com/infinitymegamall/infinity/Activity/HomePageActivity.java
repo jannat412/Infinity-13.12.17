@@ -86,7 +86,8 @@ public class HomePageActivity extends AppCompatActivity
     View v;
 
     String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0";
-    String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
+    String subcategory_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
+   // String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
@@ -108,8 +109,8 @@ public class HomePageActivity extends AppCompatActivity
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        categories.clear();
-                        //categories_api_request();
+
+
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }
@@ -117,12 +118,10 @@ public class HomePageActivity extends AppCompatActivity
 
         category = (RecyclerView) findViewById(R.id.category_nav_list);
         category_list = new ArrayList<>();
-        makeCategory();
         category_adapter = new Category_drawer_adapter(category_list);
         category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
         category.setAdapter(category_adapter);
-        categories = new ArrayList<>();
-
+        categories_api_request();
         //categories_api_request();
 /*        for (int i = 0; i < MyData.category.length; i++) {
             categories.add(new nv_category(
@@ -204,12 +203,8 @@ public class HomePageActivity extends AppCompatActivity
                             try {
 
                                 JSONObject obj = response.getJSONObject(i);
-                                NewArrival model = new NewArrival();
-                                model.setId(obj.getInt("id"));
-                                model.setNewArrival(obj.getString("name"));
+                                subcategories_api_request(obj.getString("id"),obj.getString("name"));
 
-                                // adding model to movies array
-                                categories.add(model);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -219,7 +214,7 @@ public class HomePageActivity extends AppCompatActivity
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        adapter.notifyDataSetChanged();
+                        category_adapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -281,6 +276,98 @@ public class HomePageActivity extends AppCompatActivity
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+    public void subcategories_api_request(String id,final String cat){
+
+        String api = subcategory_url+id;
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+                        List<ChildCategory> child = new ArrayList<>();
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                String name = obj.getString("name");
+                                int id = obj.getInt("id");
+                                child.add(new ChildCategory(name,id));
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_SHORT).show();
+                            }
+                            category_list.add(new ParentCategory(cat,child));
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"Unable to load category",Snackbar.LENGTH_SHORT).show();
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+        };
+
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
 
     public void makeCategory(){
 
