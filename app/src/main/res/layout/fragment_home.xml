@@ -1,11 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     tools:context="com.infinitymegamall.infinity.fragment.HomeFragment">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/searchline"
+        android:ems="10"
+        android:hint="Search"
+        android:padding="5dp"
+        android:gravity="left"
+        android:id="@+id/editTextSearch" />
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editTextSearch"
+        android:layout_alignRight="@+id/editTextSearch"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/search" />
+</RelativeLayout>
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -252,4 +278,4 @@
                 android:visibility="visible" />
         </LinearLayout>
     </ScrollView>
-</FrameLayout>
+</LinearLayout>

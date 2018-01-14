@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private ProgressBar bestseller_progressbar;
 
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
-    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=3000&category=";
+    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=300&category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
