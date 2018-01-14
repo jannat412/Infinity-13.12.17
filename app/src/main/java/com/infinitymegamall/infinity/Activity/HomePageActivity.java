@@ -120,10 +120,9 @@ public class HomePageActivity extends AppCompatActivity
 
         category = (RecyclerView) findViewById(R.id.category_nav_list);
         category_list = new ArrayList<>();
-        category_adapter = new Category_drawer_adapter(category_list);
-        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
-        category.setAdapter(category_adapter);
         categories_api_request();
+
+
         //categories_api_request();
 /*        for (int i = 0; i < MyData.category.length; i++) {
             categories.add(new nv_category(
@@ -188,6 +187,9 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
         fragmentTransaction.commit();
 
+        category_adapter = new Category_drawer_adapter(category_list);
+        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
+        category.setAdapter(category_adapter);
 
     }
 
@@ -216,7 +218,6 @@ public class HomePageActivity extends AppCompatActivity
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        category_adapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
             @Override
