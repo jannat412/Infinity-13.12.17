@@ -187,9 +187,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
         fragmentTransaction.commit();
 
-        category_adapter = new Category_drawer_adapter(category_list);
-        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
-        category.setAdapter(category_adapter);
+
 
     }
 
@@ -218,6 +216,9 @@ public class HomePageActivity extends AppCompatActivity
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
+                        category_adapter = new Category_drawer_adapter(category_list);
+                        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
+                        category.setAdapter(category_adapter);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -283,13 +284,14 @@ public class HomePageActivity extends AppCompatActivity
     public void subcategories_api_request(String id,final String cat){
 
         String api = subcategory_url+id;
+        final List<ChildCategory> child = new ArrayList<>();
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
-                        List<ChildCategory> child = new ArrayList<>();
+
                         // Parsing json
                         for (int i = 0; i < response.length(); i++) {
                             try {
@@ -304,11 +306,11 @@ public class HomePageActivity extends AppCompatActivity
                                 e.printStackTrace();
                                 Snackbar.make(v,"something went wrong",Snackbar.LENGTH_SHORT).show();
                             }
-                            category_list.add(new ParentCategory(cat,child));
+
 
                         }
                         // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -368,6 +370,7 @@ public class HomePageActivity extends AppCompatActivity
 
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
+        category_list.add(new ParentCategory(cat,child));
 
     }
 
