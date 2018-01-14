@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,19 +8,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="5dp"
+            android:layout_gravity="top"
+            android:gravity="top"
+            android:padding="10dp"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/textView2"
                 android:padding="5dp"
                 android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -97,7 +93,8 @@
             <Button
                 android:id="@+id/user_button"
                 android:layout_gravity="center_horizontal"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:background="@drawable/outline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

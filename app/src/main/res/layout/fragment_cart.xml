@@ -16,20 +16,15 @@
         android:id="@+id/cartRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </android.support.v7.widget.RecyclerView>
-
-<!--    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />-->
 
     <Button
         android:id="@+id/buy_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/outline"
         android:layout_gravity="bottom|center"
+        android:layout_marginBottom="5dp"
         android:text="Buy now" />
 
 </FrameLayout>

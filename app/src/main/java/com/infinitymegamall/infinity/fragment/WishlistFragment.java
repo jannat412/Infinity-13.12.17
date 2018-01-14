@@ -104,7 +104,7 @@ public class WishlistFragment extends Fragment {
         v = getActivity().findViewById(R.id.home_activity_id);
 //*************Wish list
         wishlistRv =(RecyclerView) getActivity().findViewById(R.id.wishlistRecycler);
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         wishlistRv.setHasFixedSize(true);
         wishlistRv.setLayoutManager(layoutManager1);
         wishArraylist = new ArrayList<>();

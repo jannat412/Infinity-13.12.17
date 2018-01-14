@@ -69,6 +69,7 @@ public class ProductDetailViewFragment extends Fragment {
     private RecyclerView galler_list;
     private static ArrayList<Gallery> galleries;
     private static RecyclerView.Adapter galleryAdapter;
+    private ImageView backbutton;
 
     private RecyclerView relatedProductsRecycler;
     private RecyclerView.Adapter relatedProductsAdapter;
@@ -155,6 +156,17 @@ public class ProductDetailViewFragment extends Fragment {
         product_price = (TextView) getActivity().findViewById(R.id.product_price);
         product_description = (TextView) getActivity().findViewById(R.id.product_description);
         product_variation = (TextView) getActivity().findViewById(R.id.product_variation);
+        backbutton = (ImageView)getActivity().findViewById(R.id.backbutton);
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                } else {
+                    //super.onBackPressed();
+                }
+            }
+        });
 
         spinner_size = (Spinner) getActivity().findViewById(R.id.size_spinner);
         sizes = new ArrayList<String>();

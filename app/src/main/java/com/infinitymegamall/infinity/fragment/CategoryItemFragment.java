@@ -93,7 +93,6 @@ public class CategoryItemFragment extends Fragment {
         if (getArguments() != null) {
             category = getArguments().getInt("category");
             category_id = Integer.toString(category);
-            //Toast.makeText(getActivity(),category_id,Toast.LENGTH_LONG).show();
 
         }
     }
