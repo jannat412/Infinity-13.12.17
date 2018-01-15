@@ -1,13 +1,10 @@
 package com.infinitymegamall.infinity.Activity;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,30 +26,20 @@ import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.infinitymegamall.infinity.Connection.Server_request;
-import com.infinitymegamall.infinity.MyData;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.adapter.Category_drawer_adapter;
-import com.infinitymegamall.infinity.adapter.NavigationCategoryAdapter;
 import com.infinitymegamall.infinity.fragment.CartFragment;
-import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
 import com.infinitymegamall.infinity.fragment.UserProfileFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
 import com.infinitymegamall.infinity.model.ChildCategory;
-import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.ParentCategory;
-import com.infinitymegamall.infinity.model.nv_category;
-import com.thoughtbot.expandablecheckrecyclerview.listeners.OnCheckChildClickListener;
-import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +49,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
@@ -82,8 +66,8 @@ public class HomePageActivity extends AppCompatActivity
     private UserProfileFragment userProfileFragment;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private LinkedHashMap<String, ParentCategory> subjects = new LinkedHashMap<String, ParentCategory>();
-    private ArrayList<ParentCategory> deptList = new ArrayList<ParentCategory>();
+    private LinkedHashMap<String, ParentCategory> sub_category_hashmap = new LinkedHashMap<String, ParentCategory>();
+    private ArrayList<ParentCategory> parent_category_arraylist = new ArrayList<ParentCategory>();
 
     private Category_drawer_adapter listAdapter;
     private ExpandableListView simpleExpandableListView;
@@ -114,8 +98,8 @@ public class HomePageActivity extends AppCompatActivity
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        subjects.clear();
-                        deptList.clear();
+                        sub_category_hashmap.clear();
+                        parent_category_arraylist.clear();
                         categories_api_request();
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -125,10 +109,36 @@ public class HomePageActivity extends AppCompatActivity
 
         simpleExpandableListView = (ExpandableListView) findViewById(R.id.category_nav_list);
         // create the adapter by passing your ArrayList data
-        listAdapter = new Category_drawer_adapter(HomePageActivity.this, deptList);
+        listAdapter = new Category_drawer_adapter(HomePageActivity.this, parent_category_arraylist);
         // attach the adapter to the expandable list view
         simpleExpandableListView.setAdapter(listAdapter);
 
+        simpleExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //get the group header
+                GroupInfo headerInfo = parent_category_arraylist.get(groupPosition);
+                //get the child info
+                ChildInfo detailInfo =  headerInfo.getProductList().get(childPosition);
+                //display it or do something with it
+                Toast.makeText(getBaseContext(), " Clicked on :: " + headerInfo.getName()
+                        + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+        // setOnGroupClickListener listener for group heading click
+        simpleExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                //get the group header
+                GroupInfo headerInfo = parent_category_arraylist.get(groupPosition);
+                //display it or do something with it
+                Toast.makeText(getBaseContext(), " Header is :: " + headerInfo.getName(),
+                        Toast.LENGTH_LONG).show();
+
+                return false;
+            }
+        });
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ImageView menuRight = (ImageView) findViewById(R.id.menuRight);
         menuRight.setOnClickListener(
@@ -243,16 +253,15 @@ public class HomePageActivity extends AppCompatActivity
         };
 
         jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
 
     }
 
-    public void subcategories_api_request(final String cid,final String cat){
+    public void subcategories_api_request(final String category_id,final String category_name){
 
-        String api = subcategory_url+cid;
+        String api = subcategory_url+category_id;
 
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
@@ -268,7 +277,7 @@ public class HomePageActivity extends AppCompatActivity
                                 JSONObject obj = response.getJSONObject(i);
                                 String name = obj.getString("name");
                                 String id = obj.getString("id");
-                                addProduct(cid,cat,id,name);
+                                addProduct(category_id,category_name,id,name);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -342,38 +351,29 @@ public class HomePageActivity extends AppCompatActivity
 
 
     }
-    private int addProduct(String cid,String department,String sid, String product){
-
-        int groupPosition = 0;
+    private void addProduct(String categoryid,String categoryname,String subcategoryid, String subcategoryname){
 
         //check the hash map if the group already exists
-        ParentCategory headerInfo = subjects.get(department);
+        ParentCategory headerInfo = sub_category_hashmap.get(categoryname);
         //add the group if doesn't exists
         if(headerInfo == null){
             headerInfo = new ParentCategory();
-            headerInfo.setName(department);
-            headerInfo.setId(cid);
-            subjects.put(department, headerInfo);
-            deptList.add(headerInfo);
+            headerInfo.setName(categoryname);
+            headerInfo.setId(categoryid);
+            sub_category_hashmap.put(categoryname, headerInfo);
+            parent_category_arraylist.add(headerInfo);
         }
 
         //get the children for the group
         ArrayList<ChildCategory> productList = headerInfo.getList();
-        //size of the children list
-        int listSize = productList.size();
-        //add to the counter
-        listSize++;
 
         //create a new child and add that to the group
         ChildCategory detailInfo = new ChildCategory();
-        detailInfo.setId(sid);
-        detailInfo.setCategory(product);
+        detailInfo.setId(subcategoryid);
+        detailInfo.setCategory(subcategoryname);
         productList.add(detailInfo);
         headerInfo.setList(productList);
 
-        //find the group position inside the list
-        groupPosition = deptList.indexOf(headerInfo);
-        return groupPosition;
     }
 
     @Override
