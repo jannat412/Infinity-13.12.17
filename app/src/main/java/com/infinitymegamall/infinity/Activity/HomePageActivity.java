@@ -52,6 +52,8 @@ import com.infinitymegamall.infinity.model.ChildCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
 import com.infinitymegamall.infinity.model.ParentCategory;
 import com.infinitymegamall.infinity.model.nv_category;
+import com.thoughtbot.expandablecheckrecyclerview.listeners.OnCheckChildClickListener;
+import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -220,6 +222,14 @@ public class HomePageActivity extends AppCompatActivity
                         category_adapter = new Category_drawer_adapter(category_list);
                         category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
                         category.setAdapter(category_adapter);
+                        /*category_adapter.setChildClickListener(new OnCheckChildClickListener() {
+                            @Override
+                            public void onCheckChildCLick(View v, boolean checked, CheckedExpandableGroup group,
+                                                          int childIndex) {
+                                Snackbar.make(v,group.getTitle()+"kisu akta",Snackbar.LENGTH_SHORT).show();
+                            }
+                        });*/
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -381,13 +391,7 @@ public class HomePageActivity extends AppCompatActivity
 
     public void makeCategory(){
 
-            List<ChildCategory> child = new ArrayList<>();
-            child.add(new ChildCategory("ddd",2));
-            child.add(new ChildCategory("sajhgbkasjd",4));
-            child.add(new ChildCategory("dsjbfj",5));
-            category_list.add(new ParentCategory("Shuvo",child));
-            category_list.add(new ParentCategory("jannat",child));
-            category_list.add(new ParentCategory("jannat",child));
+
 
     }
 

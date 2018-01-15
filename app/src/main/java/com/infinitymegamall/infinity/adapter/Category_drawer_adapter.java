@@ -10,6 +10,9 @@ import com.infinitymegamall.infinity.ViewHolders.ChildCategoryVH;
 import com.infinitymegamall.infinity.ViewHolders.ParentCategoryVH;
 import com.infinitymegamall.infinity.model.ChildCategory;
 import com.infinitymegamall.infinity.model.ParentCategory;
+import com.thoughtbot.expandablecheckrecyclerview.CheckableChildRecyclerViewAdapter;
+import com.thoughtbot.expandablecheckrecyclerview.listeners.OnCheckChildClickListener;
+import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
@@ -19,10 +22,10 @@ import java.util.List;
  * Created by shuvo on 13-Jan-18.
  */
 
-public class Category_drawer_adapter extends ExpandableRecyclerViewAdapter<ParentCategoryVH,ChildCategoryVH> {
+public class Category_drawer_adapter extends CheckableChildRecyclerViewAdapter<ParentCategoryVH,ChildCategoryVH> {
 
 
-    public Category_drawer_adapter(List<? extends ExpandableGroup> groups) {
+    public Category_drawer_adapter(List<ParentCategory> groups) {
         super(groups);
     }
 
@@ -33,20 +36,19 @@ public class Category_drawer_adapter extends ExpandableRecyclerViewAdapter<Paren
     }
 
     @Override
-    public ChildCategoryVH onCreateChildViewHolder(ViewGroup parent, int viewType) {
+    public void onBindGroupViewHolder(ParentCategoryVH holder, int flatPosition, ExpandableGroup group) {
+        holder.setTitle(group.getTitle());
+    }
+
+    @Override
+    public ChildCategoryVH onCreateCheckChildViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_child,parent,false);
         return new ChildCategoryVH(v);
     }
 
     @Override
-    public void onBindChildViewHolder(ChildCategoryVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        ChildCategory cg = (ChildCategory) group.getItems().get(childIndex);
+    public void onBindCheckChildViewHolder(ChildCategoryVH holder, int flatPosition, CheckedExpandableGroup group, int childIndex) {
+        final ChildCategory cg = (ChildCategory) group.getItems().get(childIndex);
         holder.setTitle(cg.getCategory());
     }
-
-    @Override
-    public void onBindGroupViewHolder(ParentCategoryVH holder, int flatPosition, ExpandableGroup group) {
-        holder.setTitle(group.getTitle());
-    }
-
 }
