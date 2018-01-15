@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -62,6 +63,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,28 +72,26 @@ import static com.android.volley.VolleyLog.TAG;
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,SwipeRefreshLayout.OnRefreshListener {
 
-    private static ListView listView;
-    private static ArrayList<NewArrival> categories;
-    NavigationCategoryAdapter adapter;
+
     LinearLayout parentlayout;
     public FragmentTransaction fragmentTransaction;
     public FragmentManager fragmentManager;
     private HomeFragment homeFragment;
     private WishlistFragment wishFragment;
-    private CategoryItemFragment categoryItemFragment;
     private CartFragment cartFragment;
     private UserProfileFragment userProfileFragment;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    RecyclerView category;
-    List<ParentCategory> category_list;
-    Category_drawer_adapter category_adapter;
+    private LinkedHashMap<String, ParentCategory> subjects = new LinkedHashMap<String, ParentCategory>();
+    private ArrayList<ParentCategory> deptList = new ArrayList<ParentCategory>();
 
+    private Category_drawer_adapter listAdapter;
+    private ExpandableListView simpleExpandableListView;
     View v;
 
     String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0";
     String subcategory_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
-   // String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
+    //String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
@@ -114,56 +114,20 @@ public class HomePageActivity extends AppCompatActivity
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-
-
+                        subjects.clear();
+                        deptList.clear();
+                        categories_api_request();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );
 
-        category = (RecyclerView) findViewById(R.id.category_nav_list);
-        category_list = new ArrayList<>();
-        categories_api_request();
 
-
-        //categories_api_request();
-/*        for (int i = 0; i < MyData.category.length; i++) {
-            categories.add(new nv_category(
-                    MyData.category[i],
-                    MyData.id[i]
-
-            ));
-        }*/
-/*        adapter = new NavigationCategoryAdapter(this, categories);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-
-                Bundle bundle = new Bundle();
-                int id= categories.get(position).getId();
-                bundle.putInt("category",id);
-                categoryItemFragment = new CategoryItemFragment();
-                categoryItemFragment.setArguments(bundle);
-                fragmentManager = getSupportFragmentManager();
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
-                fragmentTransaction.commit();
-                //Toast.makeText(HomePageActivity.this, ""+categories.get(position).getNewArrival(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        simpleExpandableListView = (ExpandableListView) findViewById(R.id.category_nav_list);
+        // create the adapter by passing your ArrayList data
+        listAdapter = new Category_drawer_adapter(HomePageActivity.this, deptList);
+        // attach the adapter to the expandable list view
+        simpleExpandableListView.setAdapter(listAdapter);
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ImageView menuRight = (ImageView) findViewById(R.id.menuRight);
@@ -190,6 +154,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
         fragmentTransaction.commit();
 
+        categories_api_request();
 
 
     }
@@ -218,17 +183,7 @@ public class HomePageActivity extends AppCompatActivity
 
                         }
                         // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-                        category_adapter = new Category_drawer_adapter(category_list);
-                        category.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
-                        category.setAdapter(category_adapter);
-                        /*category_adapter.setChildClickListener(new OnCheckChildClickListener() {
-                            @Override
-                            public void onCheckChildCLick(View v, boolean checked, CheckedExpandableGroup group,
-                                                          int childIndex) {
-                                Snackbar.make(v,group.getTitle()+"kisu akta",Snackbar.LENGTH_SHORT).show();
-                            }
-                        });*/
+                        listAdapter.notifyDataSetChanged();
 
                     }
                 }, new Response.ErrorListener() {
@@ -292,12 +247,13 @@ public class HomePageActivity extends AppCompatActivity
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
+
     }
 
-    public void subcategories_api_request(String id,final String cat){
+    public void subcategories_api_request(final String cid,final String cat){
 
-        String api = subcategory_url+id;
-        final List<ChildCategory> child = new ArrayList<>();
+        String api = subcategory_url+cid;
+
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
@@ -311,9 +267,8 @@ public class HomePageActivity extends AppCompatActivity
 
                                 JSONObject obj = response.getJSONObject(i);
                                 String name = obj.getString("name");
-                                int id = obj.getInt("id");
-                                child.add(new ChildCategory(name,id));
-
+                                String id = obj.getString("id");
+                                addProduct(cid,cat,id,name);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -381,18 +336,44 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 3, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
          // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
-        category_list.add(new ParentCategory(cat,child));
+
 
     }
+    private int addProduct(String cid,String department,String sid, String product){
 
+        int groupPosition = 0;
 
-    public void makeCategory(){
+        //check the hash map if the group already exists
+        ParentCategory headerInfo = subjects.get(department);
+        //add the group if doesn't exists
+        if(headerInfo == null){
+            headerInfo = new ParentCategory();
+            headerInfo.setName(department);
+            headerInfo.setId(cid);
+            subjects.put(department, headerInfo);
+            deptList.add(headerInfo);
+        }
 
+        //get the children for the group
+        ArrayList<ChildCategory> productList = headerInfo.getList();
+        //size of the children list
+        int listSize = productList.size();
+        //add to the counter
+        listSize++;
 
+        //create a new child and add that to the group
+        ChildCategory detailInfo = new ChildCategory();
+        detailInfo.setId(sid);
+        detailInfo.setCategory(product);
+        productList.add(detailInfo);
+        headerInfo.setList(productList);
 
+        //find the group position inside the list
+        groupPosition = deptList.indexOf(headerInfo);
+        return groupPosition;
     }
 
     @Override

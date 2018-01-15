@@ -4,51 +4,96 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.TextView;
 
 import com.infinitymegamall.infinity.R;
-import com.infinitymegamall.infinity.ViewHolders.ChildCategoryVH;
-import com.infinitymegamall.infinity.ViewHolders.ParentCategoryVH;
 import com.infinitymegamall.infinity.model.ChildCategory;
 import com.infinitymegamall.infinity.model.ParentCategory;
-import com.thoughtbot.expandablecheckrecyclerview.CheckableChildRecyclerViewAdapter;
-import com.thoughtbot.expandablecheckrecyclerview.listeners.OnCheckChildClickListener;
-import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by shuvo on 13-Jan-18.
  */
 
-public class Category_drawer_adapter extends CheckableChildRecyclerViewAdapter<ParentCategoryVH,ChildCategoryVH> {
+public class Category_drawer_adapter extends BaseExpandableListAdapter {
 
+    private Context context;
+    private ArrayList<ParentCategory> deptList;
 
-    public Category_drawer_adapter(List<ParentCategory> groups) {
-        super(groups);
+    public Category_drawer_adapter(Context context, ArrayList<ParentCategory> deptList) {
+        this.context = context;
+        this.deptList = deptList;
     }
 
     @Override
-    public ParentCategoryVH onCreateGroupViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_parent,parent,false);
-        return new ParentCategoryVH(v);
+    public int getGroupCount() {
+        return deptList.size();
     }
 
     @Override
-    public void onBindGroupViewHolder(ParentCategoryVH holder, int flatPosition, ExpandableGroup group) {
-        holder.setTitle(group.getTitle());
+    public int getChildrenCount(int groupPosition) {
+        ArrayList<ChildCategory> productList = deptList.get(groupPosition).getList();
+        return productList.size();
     }
 
     @Override
-    public ChildCategoryVH onCreateCheckChildViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_child,parent,false);
-        return new ChildCategoryVH(v);
+    public Object getGroup(int groupPosition) {
+        return deptList.get(groupPosition);
     }
 
     @Override
-    public void onBindCheckChildViewHolder(ChildCategoryVH holder, int flatPosition, CheckedExpandableGroup group, int childIndex) {
-        final ChildCategory cg = (ChildCategory) group.getItems().get(childIndex);
-        holder.setTitle(cg.getCategory());
+    public Object getChild(int groupPosition, int childPosition) {
+        ArrayList<ChildCategory> productList = deptList.get(groupPosition).getList();
+        return productList.get(childPosition);
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        ParentCategory headerInfo = (ParentCategory) getGroup(groupPosition);
+        if (convertView == null) {
+            LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inf.inflate(R.layout.list_item_parent, null);
+        }
+
+        TextView heading = (TextView) convertView.findViewById(R.id.cat_list_parent);
+        heading.setText(headerInfo.getName().trim());
+
+        return convertView;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        ChildCategory detailInfo = (ChildCategory) getChild(groupPosition, childPosition);
+        if (convertView == null) {
+            LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.list_item_child, null);
+        }
+
+        TextView sequence = (TextView) convertView.findViewById(R.id.cat_list_child);
+        sequence.setText(detailInfo.getCategory());
+
+        return convertView;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return true;
     }
 }

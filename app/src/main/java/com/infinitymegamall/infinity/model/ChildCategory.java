@@ -6,11 +6,15 @@ package com.infinitymegamall.infinity.model;
 
 public class ChildCategory {
     String category;
-    int id;
+    String id;
 
-    public ChildCategory(String category, int id) {
+    public ChildCategory(String id,String category ) {
         this.category = category;
         this.id = id;
+    }
+
+    public ChildCategory() {
+
     }
 
     public String getCategory() {
@@ -21,11 +25,11 @@ public class ChildCategory {
         this.category = category;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 }
