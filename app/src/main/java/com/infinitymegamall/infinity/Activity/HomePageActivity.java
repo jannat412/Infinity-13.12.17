@@ -35,6 +35,7 @@ import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.adapter.Category_drawer_adapter;
 import com.infinitymegamall.infinity.fragment.CartFragment;
+import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
 import com.infinitymegamall.infinity.fragment.UserProfileFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
@@ -64,6 +65,8 @@ public class HomePageActivity extends AppCompatActivity
     private WishlistFragment wishFragment;
     private CartFragment cartFragment;
     private UserProfileFragment userProfileFragment;
+    private CategoryItemFragment categoryItemFragment;
+
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private LinkedHashMap<String, ParentCategory> sub_category_hashmap = new LinkedHashMap<String, ParentCategory>();
@@ -117,12 +120,19 @@ public class HomePageActivity extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 //get the group header
-                GroupInfo headerInfo = parent_category_arraylist.get(groupPosition);
+                ParentCategory headerInfo = parent_category_arraylist.get(groupPosition);
                 //get the child info
-                ChildInfo detailInfo =  headerInfo.getProductList().get(childPosition);
+                ChildCategory detailInfo =  headerInfo.getList().get(childPosition);
                 //display it or do something with it
-                Toast.makeText(getBaseContext(), " Clicked on :: " + headerInfo.getName()
-                        + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
+                int cid = Integer.valueOf(detailInfo.getId());
+                Bundle bundle = new Bundle();
+                bundle.putInt("category",cid);
+                categoryItemFragment = new CategoryItemFragment();
+                categoryItemFragment.setArguments(bundle);
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+                fragmentTransaction.commit();
                 return false;
             }
         });
@@ -131,10 +141,7 @@ public class HomePageActivity extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 //get the group header
-                GroupInfo headerInfo = parent_category_arraylist.get(groupPosition);
-                //display it or do something with it
-                Toast.makeText(getBaseContext(), " Header is :: " + headerInfo.getName(),
-                        Toast.LENGTH_LONG).show();
+
 
                 return false;
             }
@@ -458,10 +465,9 @@ public class HomePageActivity extends AppCompatActivity
 
     }
 
+
     @Override
     public void onRefresh() {
-
+        
     }
-
-
 }
