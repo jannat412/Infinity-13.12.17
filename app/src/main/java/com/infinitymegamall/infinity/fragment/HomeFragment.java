@@ -10,12 +10,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -69,12 +74,13 @@ import static com.android.volley.VolleyLog.TAG;
 
 public class HomeFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener{
 
+    private EditText search_input;
     FragmentTransaction transaction;
     public FragmentManager fragmentManager;
     public FragmentTransaction fragmentTransaction;
     private ProductDetailViewFragment productDetailViewFragment;
     private CategoryItemFragment categoryItemFragment;
-
+private Search_fragment search_fragment;
     private SliderLayout mDemoSlider;
     private RecyclerView categorylistView;
     private static ArrayList<HomeCategory> categories;
@@ -102,7 +108,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     private ProgressBar new_arrival_progress;
     private ProgressBar bestseller_progressbar;
-
+    private ImageView search_btn;
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
     String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=300&category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
@@ -134,6 +140,25 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
         HomePageActivity homePageActivity = (HomePageActivity) getActivity();
 
+        //searh bar
+        search_input = (EditText) getActivity().findViewById(R.id.editTextSearch);
+        search_input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    search(v);
+                    return true;
+                }
+                return false;
+            }
+        });
+        search_btn = (ImageView)getActivity().findViewById(R.id.search_btn);
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search(v);
+            }
+        });
         //top slider
         mDemoSlider = (SliderLayout)getActivity().findViewById(R.id.slider);
 
@@ -777,6 +802,25 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
+    }
+
+    public void search(View v){
+
+        String query = search_input.getText().toString();
+        if(query.trim().length() > 0){
+            Bundle bundle = new Bundle();
+            bundle.putString("search",query);
+            search_fragment = new Search_fragment();
+            search_fragment.setArguments(bundle);
+            fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.child_fragment_container, search_fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        else {
+            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override

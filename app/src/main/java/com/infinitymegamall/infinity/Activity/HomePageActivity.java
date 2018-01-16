@@ -81,6 +81,7 @@ public class HomePageActivity extends AppCompatActivity
     //String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
+    String a ="";
 
 
     @Override
@@ -104,48 +105,10 @@ public class HomePageActivity extends AppCompatActivity
                         sub_category_hashmap.clear();
                         parent_category_arraylist.clear();
                         categories_api_request();
-                        swipeRefreshLayout.setRefreshing(false);
+
                     }
                 }
         );
-
-
-        simpleExpandableListView = (ExpandableListView) findViewById(R.id.category_nav_list);
-        // create the adapter by passing your ArrayList data
-        listAdapter = new Category_drawer_adapter(HomePageActivity.this, parent_category_arraylist);
-        // attach the adapter to the expandable list view
-        simpleExpandableListView.setAdapter(listAdapter);
-
-        simpleExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //get the group header
-                ParentCategory headerInfo = parent_category_arraylist.get(groupPosition);
-                //get the child info
-                ChildCategory detailInfo =  headerInfo.getList().get(childPosition);
-                //display it or do something with it
-                int cid = Integer.valueOf(detailInfo.getId());
-                Bundle bundle = new Bundle();
-                bundle.putInt("category",cid);
-                categoryItemFragment = new CategoryItemFragment();
-                categoryItemFragment.setArguments(bundle);
-                fragmentManager = getSupportFragmentManager();
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
-                fragmentTransaction.commit();
-                return false;
-            }
-        });
-        // setOnGroupClickListener listener for group heading click
-        simpleExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                //get the group header
-
-
-                return false;
-            }
-        });
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ImageView menuRight = (ImageView) findViewById(R.id.menuRight);
         menuRight.setOnClickListener(
@@ -162,6 +125,48 @@ public class HomePageActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        simpleExpandableListView = (ExpandableListView) findViewById(R.id.category_nav_list);
+        // create the adapter by passing your ArrayList data
+        listAdapter = new Category_drawer_adapter(HomePageActivity.this, parent_category_arraylist);
+        // attach the adapter to the expandable list view
+        simpleExpandableListView.setAdapter(listAdapter);
+
+        simpleExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+                //get the group header
+                ParentCategory headerInfo = parent_category_arraylist.get(groupPosition);
+                //get the child info
+                ChildCategory detailInfo =  headerInfo.getList().get(childPosition);
+                //display it or do something with it
+                int cid = Integer.valueOf(detailInfo.getId());
+                Bundle bundle = new Bundle();
+                bundle.putInt("category",cid);
+                categoryItemFragment = new CategoryItemFragment();
+                categoryItemFragment.setArguments(bundle);
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+                fragmentTransaction.commit();
+
+                return false;
+            }
+        });
+        // setOnGroupClickListener listener for group heading click
+        simpleExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                //get the group header
+
+
+                return false;
+            }
+        });
+
 
 
         parentlayout = (LinearLayout) findViewById(R.id.parentlayout);
@@ -187,21 +192,21 @@ public class HomePageActivity extends AppCompatActivity
 
                         // Parsing json
                         for (int i = 0; i < response.length(); i++) {
+                            String id="",name="";
                             try {
 
                                 JSONObject obj = response.getJSONObject(i);
-                                subcategories_api_request(obj.getString("id"),obj.getString("name"));
-
-
+                                id= obj.getString("id");
+                                name=obj.getString("name");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Snackbar.make(v,"something went wrong",Snackbar.LENGTH_SHORT).show();
                             }
-
+                            subcategories_api_request(id,name);
                         }
                         // notifying list adapter about data changes
                         listAdapter.notifyDataSetChanged();
-
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -209,7 +214,7 @@ public class HomePageActivity extends AppCompatActivity
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
                 Snackbar.make(v,"Unable to load category",Snackbar.LENGTH_SHORT).show();
-
+                swipeRefreshLayout.setRefreshing(false);
             }
         }){
 
@@ -259,7 +264,7 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -279,19 +284,19 @@ public class HomePageActivity extends AppCompatActivity
 
                         // Parsing json
                         for (int i = 0; i < response.length(); i++) {
+                            String name="",id="";
                             try {
 
                                 JSONObject obj = response.getJSONObject(i);
-                                String name = obj.getString("name");
-                                String id = obj.getString("id");
-                                addProduct(category_id,category_name,id,name);
+                                name = obj.getString("name");
+                                id = obj.getString("id");
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Snackbar.make(v,"something went wrong",Snackbar.LENGTH_SHORT).show();
                             }
 
-
+                            addProduct(category_id,category_name,id,name);
                         }
                         // notifying list adapter about data changes
 
@@ -301,8 +306,8 @@ public class HomePageActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"Unable to load category",Snackbar.LENGTH_SHORT).show();
-
+                Snackbar.make(v,"Unable to load sub-category",Snackbar.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }){
 
@@ -352,7 +357,6 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
          // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -378,7 +382,10 @@ public class HomePageActivity extends AppCompatActivity
         ChildCategory detailInfo = new ChildCategory();
         detailInfo.setId(subcategoryid);
         detailInfo.setCategory(subcategoryname);
+        if(!productList.contains(detailInfo))
+        {
         productList.add(detailInfo);
+        }
         headerInfo.setList(productList);
 
     }
@@ -438,6 +445,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager =getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container, cartFragment);
+        fragmentTransaction.addToBackStack("CartFragment");
         fragmentTransaction.commit();
     }
 
@@ -447,6 +455,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container,wishFragment);
+        fragmentTransaction.addToBackStack("WishlistFragment");
         fragmentTransaction.commit();
 
     }
@@ -457,6 +466,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
+        fragmentTransaction.addToBackStack("UserProfileFragment");
         fragmentTransaction.commit();
     }
 
@@ -468,6 +478,6 @@ public class HomePageActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        
+
     }
 }
