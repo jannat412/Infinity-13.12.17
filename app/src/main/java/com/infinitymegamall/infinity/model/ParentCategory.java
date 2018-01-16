@@ -2,9 +2,6 @@ package com.infinitymegamall.infinity.model;
 
 import android.os.Parcel;
 
-import com.thoughtbot.expandablecheckrecyclerview.models.CheckedExpandableGroup;
-import com.thoughtbot.expandablecheckrecyclerview.models.SingleCheckExpandableGroup;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
 import java.util.List;

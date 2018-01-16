@@ -74,7 +74,7 @@ import static com.android.volley.VolleyLog.TAG;
 
 public class HomeFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener{
 
-    private EditText search_input;
+
     FragmentTransaction transaction;
     public FragmentManager fragmentManager;
     public FragmentTransaction fragmentTransaction;
@@ -109,6 +109,7 @@ private Search_fragment search_fragment;
     private ProgressBar new_arrival_progress;
     private ProgressBar bestseller_progressbar;
     private ImageView search_btn;
+    private EditText search_input;
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
     String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=300&category=";
     String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";

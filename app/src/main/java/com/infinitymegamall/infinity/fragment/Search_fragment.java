@@ -15,10 +15,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -43,6 +49,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
@@ -54,13 +61,18 @@ public class Search_fragment extends Fragment{
     private static ArrayList<Product_details> search_fag_product_list;
     private static RecyclerView.Adapter search_fag_grid_adapter;
     private String search ="";
-    String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
-    String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
-    String a ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=36&search=";
-    String main_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
+    final String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
+    final String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
+    final String search_url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=36&search=";
+    //String main_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
     private TextView result;
     private ProgressBar fragment_progressbar;
     private View v;
+    private ImageView search_btn;
+    private EditText search_input;
+    private Spinner spinner_price;
+    private List<String> prices;
+    private ArrayAdapter<CharSequence> price_adapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +94,31 @@ public class Search_fragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
         v = getActivity().findViewById(R.id.home_activity_id);
         result =(TextView) getActivity().findViewById(R.id.result);
+
+        spinner_price =(Spinner)getActivity().findViewById(R.id.spinner_price);
+        price_adapter = ArrayAdapter.createFromResource(getActivity(),R.array.price, android.R.layout.simple_spinner_item);
+        price_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_price.setAdapter(price_adapter);
+
+        search_input = (EditText) getActivity().findViewById(R.id.editTextSearch2);
+        search_input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    search(v);
+                    return true;
+                }
+                return false;
+            }
+        });
+        search_btn = (ImageView)getActivity().findViewById(R.id.search_btn2);
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search(v);
+            }
+        });
+
         fragment_progressbar = (ProgressBar) getActivity().findViewById(R.id.search_item_progressbar);
         search_fag_product_list = new ArrayList<>();
         search_fag_product_grid = (RecyclerView) getActivity().findViewById(R.id.search_frag_gridview);
@@ -121,10 +158,10 @@ public class Search_fragment extends Fragment{
 
 
 
-    public void product_details_api_request(String postfix){
+    public void product_details_api_request(final String postfix){
         //catfag_product_list.clear();
         fragment_progressbar.setVisibility(View.VISIBLE);
-        String api= a+postfix;
+        String api= search_url +postfix;
         // Creating volley request obj
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(api,
                 new Response.Listener<JSONArray>() {
@@ -161,10 +198,10 @@ public class Search_fragment extends Fragment{
                         fragment_progressbar.setVisibility(View.GONE);
                         search_fag_grid_adapter.notifyDataSetChanged();
                         if(search_fag_product_list.size()>0){
-                            result.setText("Search results for ' "+search+" '");
+                            result.setText("Search results for ' "+postfix+" '");
                         }
                         else {
-                            result.setText("0 Search results for ' "+search+" '");
+                            result.setText("0 Search results for ' "+postfix+" '");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -229,7 +266,18 @@ public class Search_fragment extends Fragment{
 
     }
 
+    public void search(View v){
 
+        String query = search_input.getText().toString();
+        String price ="&min_price="+spinner_price.getSelectedItem();
+        if(query.trim().length() > 0){
+            search_fag_product_list.clear();
+            product_details_api_request(query+price);
+        }
+        else {
+            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
+        }
+    }
 
 
 
