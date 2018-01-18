@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -37,6 +38,7 @@ import com.infinitymegamall.infinity.adapter.Category_drawer_adapter;
 import com.infinitymegamall.infinity.fragment.CartFragment;
 import com.infinitymegamall.infinity.fragment.CategoryItemFragment;
 import com.infinitymegamall.infinity.fragment.HomeFragment;
+import com.infinitymegamall.infinity.fragment.MoreFragment;
 import com.infinitymegamall.infinity.fragment.UserProfileFragment;
 import com.infinitymegamall.infinity.fragment.WishlistFragment;
 import com.infinitymegamall.infinity.model.ChildCategory;
@@ -65,13 +67,13 @@ public class HomePageActivity extends AppCompatActivity
     private WishlistFragment wishFragment;
     private CartFragment cartFragment;
     private UserProfileFragment userProfileFragment;
+    private MoreFragment moreFragment;
     private CategoryItemFragment categoryItemFragment;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private LinkedHashMap<String, ParentCategory> sub_category_hashmap = new LinkedHashMap<String, ParentCategory>();
     private ArrayList<ParentCategory> parent_category_arraylist = new ArrayList<ParentCategory>();
-
     private Category_drawer_adapter listAdapter;
     private ExpandableListView simpleExpandableListView;
     View v;
@@ -81,7 +83,6 @@ public class HomePageActivity extends AppCompatActivity
     //String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
-    String a ="";
 
 
     @Override
@@ -96,7 +97,6 @@ public class HomePageActivity extends AppCompatActivity
         v = findViewById(R.id.home_activity_id);
 
         //listView = (ListView) findViewById(R.id.navigation_list);
-
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -162,6 +162,15 @@ public class HomePageActivity extends AppCompatActivity
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 //get the group header
 
+                if(parent.isGroupExpanded(groupPosition))
+                {
+
+
+                }
+                else{
+
+
+                }
 
                 return false;
             }
@@ -178,7 +187,7 @@ public class HomePageActivity extends AppCompatActivity
 
         categories_api_request();
 
-
+        //simpleExpandableListView.setIndicatorBounds(simpleExpandableListView.getRight()- 40, simpleExpandableListView.getWidth());
     }
 
     public void categories_api_request(){
@@ -471,8 +480,13 @@ public class HomePageActivity extends AppCompatActivity
     }
 
     public void more(View view) {
-        Snackbar.make(v,"More",Snackbar.LENGTH_LONG).show();
-
+        //Snackbar.make(v,"More",Snackbar.LENGTH_LONG).show();
+        moreFragment = new MoreFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container,moreFragment);
+        fragmentTransaction.addToBackStack("MoreFragment");
+        fragmentTransaction.commit();
     }
 
 

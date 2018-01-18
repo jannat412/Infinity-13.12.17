@@ -4,27 +4,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="20dp"
+    android:text="-  Your Cart  -"
+    android:gravity="center"
+    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+    />
     <ProgressBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cart_progressbar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:indeterminate="true"
+        android:layout_marginTop="16dp"
         />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cartRecycler"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
-
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="right"
+        android:layout_marginBottom="2dp"
+        android:orientation="vertical"
+        android:background="?android:attr/selectableItemBackground">
+<TextView
+    android:id="@+id/total"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="Total : "
+    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+    />
     <Button
         android:id="@+id/buy_button"
         android:layout_width="wrap_content"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
-        android:background="@drawable/outline"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="5dp"
+        android:textColor="@color/white"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:background="@color/red"
         android:text="Buy now" />
+
+    </LinearLayout>
 
 </FrameLayout>

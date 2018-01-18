@@ -4,17 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="-  Wishlist  -"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        />
     <ProgressBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/wishlist_progressbar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:indeterminate="true"
-        />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/wishlistRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_marginTop="16dp"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/wishlistRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+        </android.support.v7.widget.RecyclerView>
+
 
 </FrameLayout>

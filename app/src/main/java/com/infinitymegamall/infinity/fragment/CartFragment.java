@@ -98,7 +98,8 @@ public class CartFragment extends Fragment{
     private Gson gsonInstance;
     private Button buy_now;
     private UserProfile user;
-    TextView result ;
+    TextView total;
+    int total_amount = 0;
 
     public CartFragment() {
     }
@@ -112,7 +113,6 @@ public class CartFragment extends Fragment{
             productSize = getArguments().getString("productsize");
             productQuantity = getArguments().getString("productquantity");
             cartlocalArrayList.add(new Cart(productId,productSize,productQuantity));
-
             savedata();
         }
 
@@ -129,6 +129,7 @@ public class CartFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
 
         v = getActivity().findViewById(R.id.home_activity_id);
+        total = (TextView) getActivity().findViewById(R.id.total);
         cart_progressbar = (ProgressBar) getActivity().findViewById(R.id.cart_progressbar);
         //result = (TextView) getActivity().findViewById(R.id.textView3);
         buy_now =(Button) getActivity().findViewById(R.id.buy_button);
@@ -166,6 +167,7 @@ public class CartFragment extends Fragment{
 
         if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
             buy_now.setVisibility(View.GONE);
+            total.setVisibility(View.GONE);
         }
 
         cartRV =(RecyclerView) getActivity().findViewById(R.id.cartRecycler);
@@ -202,6 +204,7 @@ public class CartFragment extends Fragment{
                                         cartListAdapter.notifyItemRemoved(position);
                                         cartListAdapter.notifyItemRangeChanged(position,cartArrayList.size());
                                         savedata();
+                                        calculate_total();
                                     }
                                 });
 
@@ -296,6 +299,7 @@ public class CartFragment extends Fragment{
                                 //Snackbar.make(v,"grid  "+model.getId(),Snackbar.LENGTH_SHORT).show();
                                 cartArrayList.add(model);
 
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
@@ -307,6 +311,7 @@ public class CartFragment extends Fragment{
                         // so that it renders the list view with updated data
                         cart_progressbar.setVisibility(View.GONE);
                         cartListAdapter.notifyDataSetChanged();
+                        calculate_total();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -333,6 +338,19 @@ public class CartFragment extends Fragment{
 
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+    public void calculate_total(){
+        total_amount=0;
+        if(cartArrayList.size()>0 && cartArrayList!= null){
+            for(int i=0;i<cartArrayList.size();i++){
+                int quantity = Integer.parseInt(cartArrayList.get(i).getProductQuantity());
+                int price = Integer.parseInt(cartArrayList.get(i).getProductPrie());
+                total_amount = total_amount+(price*quantity);
+            }
+        }
+        total.setText("Total : "+Integer.toString(total_amount));
 
     }
 

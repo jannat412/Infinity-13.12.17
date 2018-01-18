@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,6 +41,7 @@ public class UserProfileFragment extends Fragment{
     private String error_msg="Invalid";
     private Boolean valid = true;
     private View v;
+    private ImageView backbutton;
 
     public UserProfileFragment() {
     }
@@ -69,8 +71,17 @@ public class UserProfileFragment extends Fragment{
         email =  (EditText) getActivity().findViewById(R.id.email);
         mobile =  (EditText) getActivity().findViewById(R.id.phone);
 
-
-
+        backbutton = (ImageView)getActivity().findViewById(R.id.backbutton_profile);
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                } else {
+                    //super.onBackPressed();
+                }
+            }
+        });
         loadData();
 
         save.setOnClickListener(new View.OnClickListener() {

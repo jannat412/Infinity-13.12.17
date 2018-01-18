@@ -244,6 +244,7 @@ private Search_fragment search_fragment;
                         fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+                        fragmentTransaction.addToBackStack("categoryItemFragment");
                         fragmentTransaction.commit();
 
                     }

@@ -1,5 +1,7 @@
 package com.infinitymegamall.infinity.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -35,7 +37,9 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyCategory;
 import com.infinitymegamall.infinity.MyGallery;
@@ -45,6 +49,7 @@ import com.infinitymegamall.infinity.adapter.CategorylistAdapter;
 import com.infinitymegamall.infinity.adapter.GalleryImageAdapter;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
 import com.infinitymegamall.infinity.adapter.RelatedProductsAdapter;
+import com.infinitymegamall.infinity.model.Cart;
 import com.infinitymegamall.infinity.model.Cartproduct;
 import com.infinitymegamall.infinity.model.Gallery;
 import com.infinitymegamall.infinity.model.HomeCategory;
@@ -56,6 +61,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,14 +96,14 @@ public class ProductDetailViewFragment extends Fragment {
     ArrayAdapter<String> size_Adapter;
     ArrayAdapter<CharSequence> quantity_Adapter;
     private CartFragment cartFragment;
-    private WishlistFragment wishFragment;
     private ProductDetailViewFragment productDetailViewFragment;
     FragmentTransaction transaction;
     private Button addtocart;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageView heart;
     private ProgressBar related_products_progessbar;
-
+    ArrayList<Cart> wishlocalArrayList;
+    private Gson gsonInstance;
 
     public ProductDetailViewFragment() {
         // Required empty public constructor
@@ -244,7 +250,7 @@ public class ProductDetailViewFragment extends Fragment {
                     }
                 })
         );
-
+        loaddata();
         product_request(producyURL+productId);
 
     }
@@ -432,38 +438,25 @@ public class ProductDetailViewFragment extends Fragment {
     public void addtoWishList(){
 
         if( spinner_quantity.getSelectedItem() !=null && spinner_size.getSelectedItem() !=null ){
-            //Snackbar.make(v,"if condition true",Snackbar.LENGTH_LONG).show();
+
             productquantity = (String)spinner_quantity.getSelectedItem();
             productsize = (String)spinner_size.getSelectedItem();
 
-            //Snackbar.make(v,productquantity+" "+productsize,Snackbar.LENGTH_LONG).show();
-            Bundle bundle = new Bundle();
-            bundle.putString("productquantity",productquantity);
-            bundle.putString("productsize",productsize);
-            bundle.putString("productid",productId);
-            wishFragment = new WishlistFragment();
-            wishFragment.setArguments(bundle);
-            transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.child_fragment_container, wishFragment);
-            transaction.addToBackStack("WishlistFragment");
-            transaction.commit();
-
+            wishlocalArrayList.add(new Cart(productId,productsize,productquantity));
+            savedata();
+            heart.setImageResource(R.drawable.fvt_red);
+            Snackbar.make(v,"Added to your wishlist",Snackbar.LENGTH_LONG).show();
         }
         else if(spinner_size.getSelectedItem() == null && spinner_quantity.getSelectedItem() != null ){
             //Snackbar.make(v,"size is default",Snackbar.LENGTH_LONG).show();
             productquantity = (String) spinner_quantity.getSelectedItem();
             productsize = "default";
 
-            Bundle bundle = new Bundle();
-            bundle.putString("productquantity",productquantity);
-            bundle.putString("productsize",productsize);
-            bundle.putString("productid",productId);
-            wishFragment = new WishlistFragment();
-            wishFragment.setArguments(bundle);
-            transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.child_fragment_container, wishFragment);
-            transaction.addToBackStack("WishlistFragment");
-            transaction.commit();
+
+            wishlocalArrayList.add(new Cart(productId,productsize,productquantity));
+            savedata();
+            heart.setImageResource(R.drawable.fvt_red);
+            Snackbar.make(v,"Added to your wishlist",Snackbar.LENGTH_LONG).show();
         }
         else {
             Snackbar.make(v,"size or quantity is missing",Snackbar.LENGTH_SHORT).show();
@@ -552,6 +545,29 @@ public class ProductDetailViewFragment extends Fragment {
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+    public void loaddata(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference", Context.MODE_PRIVATE);
+        gsonInstance = new Gson();
+        String json = sharedPreferences.getString("wishlocal",null);
+        Type type = new TypeToken<ArrayList<Cart>>(){}.getType();
+        wishlocalArrayList = gsonInstance.fromJson(json,type);
+        if(wishlocalArrayList==null){
+            wishlocalArrayList =new ArrayList<>();
+        }
+    }
+
+    public void savedata(){
+        SharedPreferences sharedpref = getActivity().getSharedPreferences("shared preference", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor= sharedpref.edit();
+        gsonInstance = new Gson();
+        String json = gsonInstance.toJson(wishlocalArrayList);
+        editor.putString("wishlocal",json);
+        editor.apply();
+    }
+
+
+
 
 }
 

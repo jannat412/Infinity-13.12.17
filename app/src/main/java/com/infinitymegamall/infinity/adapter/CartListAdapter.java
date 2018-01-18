@@ -43,7 +43,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         TextView cartProductPrice=holder.cartProductPrice;
         TextView cartProductQuantity=holder.cartProductQuantity;
         TextView cartProductSize=holder.cartProductSize;
-
+        TextView cartProductAmount = holder.cartProductAmount;
         Glide.with(c)
                 .load(cartArraylist.get(position).getProductImage())
                 .centerCrop()
@@ -51,9 +51,12 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
                 .crossFade()
                 .into(holder.cartImage);
         cartProductName.setText(cartArraylist.get(position).getProductName());
-        cartProductPrice.setText("price: "+cartArraylist.get(position).getProductPrie());
-        cartProductQuantity.setText("quantity: "+cartArraylist.get(position).getProductQuantity());
-        cartProductSize.setText("size: "+cartArraylist.get(position).getProductSize());
+        cartProductPrice.setText("price : "+cartArraylist.get(position).getProductPrie());
+        cartProductQuantity.setText("quantity : "+cartArraylist.get(position).getProductQuantity());
+        cartProductSize.setText("size : "+cartArraylist.get(position).getProductSize());
+        int price = Integer.parseInt(cartArraylist.get(position).getProductPrie());
+        int quantity = Integer.parseInt(cartArraylist.get(position).getProductQuantity());
+        cartProductAmount.setText("Total: "+Integer.toString(price*quantity));
 
     }
 
@@ -88,6 +91,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         TextView cartProductPrice;
         TextView cartProductQuantity;
         TextView cartProductSize;
+        TextView cartProductAmount;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.cartImage = (ImageView) itemView.findViewById(R.id.cart_image);
@@ -95,6 +99,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             this.cartProductPrice = (TextView) itemView.findViewById(R.id.cart_price);
             this.cartProductQuantity = (TextView) itemView.findViewById(R.id.cart_quantity);
             this.cartProductSize = (TextView) itemView.findViewById(R.id.cart_size);
+            this.cartProductAmount = (TextView) itemView.findViewById(R.id.cart_total_amount);
         }
     }
 }
