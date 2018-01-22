@@ -445,6 +445,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
+        fragmentTransaction.addToBackStack("homeFragment");
         fragmentTransaction.commit();
     }
 

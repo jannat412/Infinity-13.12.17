@@ -8,7 +8,7 @@
 <TextView
     android:layout_width="match_parent"
     android:layout_height="20dp"
-    android:text="-  Your Cart  -"
+    android:text="Your Cart"
     android:gravity="center"
     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
     />
@@ -37,10 +37,11 @@
         android:background="?android:attr/selectableItemBackground">
 <TextView
     android:id="@+id/total"
-    android:layout_width="100dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:text="Total : "
+    android:maxLines="1"
     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
     />
     <Button

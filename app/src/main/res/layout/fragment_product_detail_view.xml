@@ -18,7 +18,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
               <RelativeLayout
-                  android:layout_marginTop="10dp"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:background="?android:attr/selectableItemBackground">
@@ -32,14 +31,14 @@
                       android:id="@+id/backbutton"
                       android:layout_width="35dp"
                       android:layout_height="35dp"
-                      android:layout_margin="10dp"
+                      android:layout_marginLeft="10dp"
                       android:src="@drawable/back" />
 
                   <ImageView
                       android:id="@+id/heart"
                       android:layout_width="40dp"
                       android:layout_height="40dp"
-                      android:layout_margin="10dp"
+                      android:layout_marginRight="10dp"
                       android:layout_alignParentRight="true"
                       android:src="@drawable/fvt_gray" />
               </RelativeLayout>
@@ -47,38 +46,20 @@
               <RelativeLayout
                   android:layout_marginTop="10dp"
                   android:id="@+id/gallery_relative_layout"
-                  android:layout_width="350dp"
+                  android:layout_width="match_parent"
                   android:layout_gravity="center"
                   android:layout_height="wrap_content"
                   android:layout_alignParentBottom="true"
+                  android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                  android:layout_marginRight="@dimen/activity_horizontal_margin"
                   android:orientation="horizontal">
 
-                  <ImageView
-                      android:id="@+id/left_arrow_imageview"
-                      android:layout_width="35dp"
-                      android:layout_height="35dp"
-                      android:layout_centerVertical="true"
-                      android:layout_marginLeft="1dip"
-                      android:src="@drawable/gray_icon_left" />
-                  <LinearLayout
-                      android:layout_toRightOf="@+id/left_arrow_imageview"
-                      android:layout_toLeftOf="@+id/right_arrow_imageview"
-                      android:layout_width="250dp"
-                      android:layout_height="wrap_content">
                       <android.support.v7.widget.RecyclerView
                           android:layout_width="match_parent"
                           android:layout_height="110dp"
                           android:id="@+id/galler_list">
                       </android.support.v7.widget.RecyclerView>
-                  </LinearLayout>
-                  <ImageView
-                      android:id="@+id/right_arrow_imageview"
-                      android:layout_width="35dp"
-                      android:layout_height="35dp"
-                      android:layout_alignParentRight="true"
-                      android:layout_centerVertical="true"
-                      android:layout_marginRight="1dip"
-                      android:src="@drawable/gray_icon_right" />
+
               </RelativeLayout>
               <TextView
                   android:layout_margin="5dp"
@@ -144,8 +125,8 @@
 
                   <Button
                       android:id="@+id/addtocart"
-                      android:layout_width="110dp"
-                      android:layout_height="match_parent"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
                       android:layout_gravity="left"
                       android:textColor="@color/white"
                       android:textSize="14dp"
@@ -153,6 +134,10 @@
                       android:gravity="center"
                       android:paddingLeft="5dp"
                       android:paddingRight="5dp"
+                      android:bottomRightRadius="10dp"
+                      android:topRightRadius="10dp"
+                      android:bottomLeftRadius="10dp"
+                      android:topLeftRadius="10dp"
                       android:text="Add to Cart"
                       android:textStyle="bold" />
               </LinearLayout>

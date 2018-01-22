@@ -403,8 +403,8 @@ private Search_fragment search_fragment;
             public void onInitializationFailure(Provider provider, YouTubeInitializationResult error) {
                 // YouTube error
                 String errorMessage = error.toString();
-                Snackbar.make(v,errorMessage,Snackbar.LENGTH_LONG).show();
-                Log.d("errorMessage:", errorMessage);
+                //Snackbar.make(v,errorMessage,Snackbar.LENGTH_LONG).show();
+                Log.d("yt errorMessage:", errorMessage);
             }
         });
 

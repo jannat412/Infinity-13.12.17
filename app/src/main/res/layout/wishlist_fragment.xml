@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:text="-  Wishlist  -"
+        android:text="Wishlist"
         android:gravity="center"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         />

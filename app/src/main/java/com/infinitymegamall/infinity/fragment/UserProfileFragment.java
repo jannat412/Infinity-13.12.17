@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,6 +45,10 @@ public class UserProfileFragment extends Fragment{
     private Boolean valid = true;
     private View v;
     private ImageView backbutton;
+    public FragmentTransaction fragmentTransaction;
+    public FragmentManager fragmentManager;
+    private CartFragment cartFragment;
+    int cart = 0;
 
     public UserProfileFragment() {
     }
@@ -49,6 +56,9 @@ public class UserProfileFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null && getArguments().containsKey("cart")){
+            cart=1;
+        }
     }
 
     @Nullable
@@ -139,11 +149,23 @@ public class UserProfileFragment extends Fragment{
 
         SharedPreferences sharedpref = getActivity().getSharedPreferences("shared preference", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor= sharedpref.edit();
-        gsonInstance = new Gson();
-        String json = gsonInstance.toJson(user);
-        editor.putString("user",json);
-        editor.apply();
-        Snackbar.make(v,"User profile saved",Snackbar.LENGTH_SHORT).show();
+            gsonInstance = new Gson();
+            String json = gsonInstance.toJson(user);
+            editor.putString("user",json);
+            editor.apply();
+            Snackbar.make(v," User profile updated ",Snackbar.LENGTH_LONG).show();
+            if(cart == 1)
+            move_to_cartfragment();
+
+    }
+
+    public void move_to_cartfragment(){
+        cartFragment = new CartFragment();
+        fragmentManager =getActivity().getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container, cartFragment);
+        fragmentTransaction.addToBackStack("CartFragment");
+        fragmentTransaction.commit();
     }
 
     public void loadData(){

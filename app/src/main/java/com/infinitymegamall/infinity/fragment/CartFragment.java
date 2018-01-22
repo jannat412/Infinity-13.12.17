@@ -101,6 +101,7 @@ public class CartFragment extends Fragment{
     TextView total;
     int total_amount = 0;
 
+
     public CartFragment() {
     }
 
@@ -108,13 +109,14 @@ public class CartFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loaddata();
-        if (getArguments() != null) {
+        if (getArguments() != null && getArguments().containsKey("productid")) {
             productId = getArguments().getString("productid");
             productSize = getArguments().getString("productsize");
             productQuantity = getArguments().getString("productquantity");
             cartlocalArrayList.add(new Cart(productId,productSize,productQuantity));
             savedata();
         }
+
 
     }
 
@@ -155,7 +157,10 @@ public class CartFragment extends Fragment{
                 }
                 else {
                     Snackbar.make(v,"fill up user info",Snackbar.LENGTH_LONG).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("cart",1);
                     userProfileFragment = new UserProfileFragment();
+                    userProfileFragment.setArguments(bundle);
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);

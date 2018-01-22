@@ -86,7 +86,7 @@ public class ProductDetailViewFragment extends Fragment {
     private static String productId="",productsize="",productquantity="";
     private View v;
     private static String url ="https://infinitymegamall.com/wp-json/wc/v2/products?include=";
-    private static String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
+    //private static String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
     private static String producyURL ="https://infinitymegamall.com/wp-json/wc/v2/products/";
     private static String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     private static String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
@@ -113,10 +113,11 @@ public class ProductDetailViewFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+        if (getArguments() != null && getArguments().containsKey("productId")) {
             productId = Integer.toString(getArguments().getInt("productId"));
             //Toast.makeText(getActivity(),productId,Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -555,6 +556,13 @@ public class ProductDetailViewFragment extends Fragment {
         if(wishlocalArrayList==null){
             wishlocalArrayList =new ArrayList<>();
         }
+        for (int i=0; i < wishlocalArrayList.size(); i++){
+            String y = wishlocalArrayList.get(i).getProductId();
+            if (y.equals(productId)){
+                heart.setImageResource(R.drawable.fvt_red);
+            }
+        }
+
     }
 
     public void savedata(){
