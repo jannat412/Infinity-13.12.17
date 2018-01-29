@@ -164,6 +164,7 @@ public class CartFragment extends Fragment{
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
+                    fragmentTransaction.addToBackStack("UserProfileFragment");
                     fragmentTransaction.commit();
                 }
 

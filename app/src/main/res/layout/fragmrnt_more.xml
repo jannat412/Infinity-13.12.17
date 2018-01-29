@@ -137,7 +137,15 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:textColor="#666666"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.SearchResult.Title"
+                    android:text="http://www.ingeniumbd.com/"/>
 
                 <ImageButton
                     android:id="@id/expand_collapse"

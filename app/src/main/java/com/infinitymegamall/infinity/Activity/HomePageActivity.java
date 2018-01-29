@@ -51,8 +51,10 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -84,6 +86,9 @@ public class HomePageActivity extends AppCompatActivity
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
 
+    public void check(){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,7 +278,7 @@ public class HomePageActivity extends AppCompatActivity
             }
         };
 
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -395,6 +400,10 @@ public class HomePageActivity extends AppCompatActivity
         {
         productList.add(detailInfo);
         }
+        Set<ChildCategory> hs = new HashSet<>();
+        hs.addAll(productList);
+        productList.clear();
+        productList.addAll(hs);
         headerInfo.setList(productList);
 
     }

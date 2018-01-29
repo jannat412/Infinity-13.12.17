@@ -80,16 +80,12 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     public FragmentTransaction fragmentTransaction;
     private ProductDetailViewFragment productDetailViewFragment;
     private CategoryItemFragment categoryItemFragment;
-private Search_fragment search_fragment;
+    private Search_fragment search_fragment;
     private SliderLayout mDemoSlider;
     private RecyclerView categorylistView;
     private static ArrayList<HomeCategory> categories;
     private static RecyclerView.Adapter categorylistAdapter;
-
-   // private GridView exclusivelist;
-   // private List<Exclusive> exclusives = new ArrayList<>();
-   // private ExclusivelistAdapter exclusivelistAdapter;
-
+    
     private RecyclerView newarrivalList;
     private static ArrayList<NewArrival> newArrivals;
     private static RecyclerView.Adapter newArrivalAdapter;

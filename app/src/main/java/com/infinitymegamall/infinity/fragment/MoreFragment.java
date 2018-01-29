@@ -16,7 +16,7 @@ import com.ms.square.android.expandabletextview.ExpandableTextView;
  */
 
 public class MoreFragment extends Fragment {
-    String contact = "CONTACT US\n\n" +
+    String contact = "Contact us\n\n" +
             "Lubnan Trade Consortium Ltd. Homestead Gulshan Link Tower, TA – 99, (12th & 13th floor), Gulshan Badda link road, Dhaka-1212, Bangladesh\n" +
             "support@infinitymegamall.com\n" +
             "+88 01760-606089\n" +
@@ -45,8 +45,7 @@ public class MoreFragment extends Fragment {
             "\n" +
             "Our mission is to establish these brands LUBNAN, RICHMAN & iNFINITY Mega Mall under Lubnan Trade Consortium Ltd. as the leading and largest fashion brands in Bangladesh and to reach its presence to every nook and corner of the country.";
 
-    String return_policy="RETURNS & EXCHANGES\n" +
-            "Return Policy?\n" +
+    String return_policy="Returns and exchanges policy\n" +
             "\n" +
             "Customer satisfaction is our utmost priority, at all times. Customers can return their products bought online from iNFINITYmegamall.com if they want. All they need to do is to raise a request for return. Customers can initiate return within a period of 5 days from delivery date. Customers can reach us on our customer care helpline 01760-606089, our team will take things forward on the receipt of Return Request submitted on infinitymegamall.com, at the earliest.\n" +
             "\n" +
@@ -80,13 +79,12 @@ public class MoreFragment extends Fragment {
             " \n" +
             "\n" +
             "Customers will not be charged for courier charges for the products returned.\n";
-    String dev="Developed by IngeniumBd \n \n " +
+    String dev="Developed by IngeniumBD \n \n " +
             "Address: House: 1/2, Noorjahan Road(Third Floor)\n" +
-            "\n" +
-            "Mohammadpur Dhaka- 1207, Bangladesh" +
+            "Mohammadpur Dhaka- 1207, Bangladesh \n" +
             "contact: +8801763432203\n" +
             "info@ingeniumbd.com\n" +
-            "shuvoprosad@gmail.com\n";
+            "shuvoprosad@gmail.com";
 
     public MoreFragment() {
 
