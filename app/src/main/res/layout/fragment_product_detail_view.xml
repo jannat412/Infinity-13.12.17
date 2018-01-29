@@ -17,16 +17,29 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+
               <RelativeLayout
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:background="?android:attr/selectableItemBackground">
                   <ImageView
+                      android:layout_below="@id/product_name"
                       android:id="@+id/galleryView"
                       android:layout_gravity="center"
                       android:layout_width="wrap_content"
                       android:layout_height="300dp"
                       android:src="@drawable/loading" />
+                  <TextView
+                      android:layout_margin="5dp"
+                      android:id="@+id/product_name"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textColor="@android:color/black"
+                      android:textStyle="bold"
+                      android:layout_gravity="center"
+                      android:gravity="center"
+                      android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                      android:text="@string/loading"/>
                   <ImageView
                       android:id="@+id/backbutton"
                       android:layout_width="35dp"
@@ -61,17 +74,7 @@
                       </android.support.v7.widget.RecyclerView>
 
               </RelativeLayout>
-              <TextView
-                  android:layout_margin="5dp"
-                  android:id="@+id/product_name"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:textColor="@android:color/black"
-                  android:textStyle="bold"
-                  android:layout_gravity="center"
-                  android:gravity="center"
-                  android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                  android:text="@string/loading"/>
+
               <TextView
                   android:id="@+id/product_price"
                   android:layout_width="match_parent"

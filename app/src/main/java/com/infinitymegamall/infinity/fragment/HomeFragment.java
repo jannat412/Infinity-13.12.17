@@ -116,7 +116,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     public static final String API_KEY = "AIzaSyDkadPHN-zCcuIGermsAlpwpMXhurR8BVk";
     private static String VIDEO_ID = "sBGiyjOrRIs";
-
+    private ImageView lubnanIV;
+    private ImageView richmanIV;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -164,6 +165,22 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
         //exclusive grid view
         //exclusivelist = (GridView ) getActivity().findViewById(R.id.exclusive);
+
+        lubnanIV = (ImageView) getActivity().findViewById(R.id.lubnanstore);
+        lubnanIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lubnan();
+            }
+        });
+
+        richmanIV = (ImageView) getActivity().findViewById(R.id.richmanstore);
+        richmanIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                richman();
+            }
+        });
 
         //new arrival
         newarrivalList = (RecyclerView) getActivity().findViewById(R.id.newarrivalList);
@@ -805,6 +822,43 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     public void search(View v){
 
         String query = search_input.getText().toString();
+        if(query.trim().length() > 0){
+            Bundle bundle = new Bundle();
+            bundle.putString("search",query);
+            search_fragment = new Search_fragment();
+            search_fragment.setArguments(bundle);
+            fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.child_fragment_container, search_fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        else {
+            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
+        }
+    }
+    public void lubnan(){
+
+        String query = "lubnan";
+        if(query.trim().length() > 0){
+            Bundle bundle = new Bundle();
+            bundle.putString("search",query);
+            search_fragment = new Search_fragment();
+            search_fragment.setArguments(bundle);
+            fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.child_fragment_container, search_fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        else {
+            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    public void richman(){
+
+        String query = "richman";
         if(query.trim().length() > 0){
             Bundle bundle = new Bundle();
             bundle.putString("search",query);
