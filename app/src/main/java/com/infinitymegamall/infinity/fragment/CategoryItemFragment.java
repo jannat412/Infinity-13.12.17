@@ -82,12 +82,15 @@ public class CategoryItemFragment extends Fragment {
 
     String a ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=20&category=";
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
-    String products_pagination_url="https://infinitymegamall.com/wp-json/wc/v2/products?category=269&per_page=16&page=";
+    String lubnan_store_url="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=20&tag=293&page=";
+    String richman_store_url="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=20&tag=266&page=";
     //String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=10&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
     String category_id="";
     int category;
+    int lubnan_int = 293;
+    String lubnan ="";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,7 +118,7 @@ public class CategoryItemFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
+        lubnan = Integer.toString(lubnan_int);
         v = getActivity().findViewById(R.id.home_activity_id);
         category_fragment_progressbar = (ProgressBar) getActivity().findViewById(R.id.category_item_progressbar);
         category_item_list = (RecyclerView) getActivity().findViewById(R.id.category_item_List);
@@ -128,7 +131,13 @@ public class CategoryItemFragment extends Fragment {
 
         category_arraylist = new ArrayList<>();
         category_arraylist.add(new nv_category("All", 0));
-        subcategories_api_request(category_id);
+
+        if(category_id.equals("293") || category_id.equals("266")){
+
+        }
+        else {
+            subcategories_api_request(category_id);
+        }
         category_adapter = new CategoryPageCategoryItemAdapter(getActivity(), category_arraylist);
         category_item_list.setAdapter(category_adapter);
 
@@ -140,14 +149,23 @@ public class CategoryItemFragment extends Fragment {
                         String sub_cat_id = category_arraylist.get(position).getCategoryName();
                         //Snackbar.make(v,sub_cat_id,Snackbar.LENGTH_LONG).show();
 
-                        if(sub_cat_id=="All"){
+                        if(category_id.equals("293")){
                             catfag_product_list.clear();
-                            product_details_api_request(category_id);
+                            product_store_api_request(lubnan_store_url+"1");
+                        }
+                        else if(category_id.equals("266")){
+                            catfag_product_list.clear();
+                            product_store_api_request(richman_store_url+"1");
                         }
                         else {
-                            catfag_product_list.clear();
-                            String a = String.valueOf(category_arraylist.get(position).getId());
-                            product_details_api_request(a);
+                            if (sub_cat_id == "All") {
+                                catfag_product_list.clear();
+                                product_details_api_request(category_id);
+                            } else {
+                                catfag_product_list.clear();
+                                String a = String.valueOf(category_arraylist.get(position).getId());
+                                product_details_api_request(a);
+                            }
                         }
 
                     }
@@ -200,22 +218,34 @@ public class CategoryItemFragment extends Fragment {
                 totalItemCount = gridLayoutManager.getItemCount();
                 lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
                 if (loading==false && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-
                     inc++;
-                    String a = category_id+"&page="+inc;
-                    product_details_api_request(a);
+                    if(category_id.equals("293")){
+                        product_store_api_request(lubnan_store_url+inc);
+                    }
+                    else if(category_id.equals("266")){
+                        product_store_api_request(richman_store_url+inc);
+                    }
+                    else {
+                        String a = category_id + "&page=" + inc;
+                        product_details_api_request(a);
+                    }
                 }
             }
         });
 
-        product_details_api_request(category_id+"&page=1");
+        if(category_id.equals("293")){
+            product_store_api_request(lubnan_store_url+"1");
+        }else if(category_id.equals("266")){
+            product_store_api_request(richman_store_url+"1");
+        }else {
+            product_details_api_request(category_id + "&page=1");
+        }
     }
 
 
     public void subcategories_api_request(String postfix){
 
         String subcat_url=main_url+postfix;
-        //String cat = main_url+"34";
         // Creating volley request obj
         category_fragment_progressbar.setVisibility(View.VISIBLE);
 
@@ -304,6 +334,110 @@ public class CategoryItemFragment extends Fragment {
                 }
             }
         };
+        // Adding request to request queue
+        Server_request.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+    public void product_store_api_request(String postfix){
+        //catfag_product_list.clear();
+        category_fragment_progressbar.setVisibility(View.VISIBLE);
+
+        loading = true;
+        // Creating volley request obj
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest(postfix,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                        // Parsing json
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                JSONObject obj = response.getJSONObject(i);
+                                Product_details model = new Product_details();
+                                model.setId(obj.getInt("id"));
+                                model.setProduct_name(obj.getString("name"));
+                                model.setProduct_price(obj.getString("price"));
+                                JSONArray img = obj.getJSONArray("images");
+                                JSONObject item = img.getJSONObject(0);
+                                String image = item.getString("src");
+                                model.setProduct_image(image);
+                                // adding model to product details  array
+                                //Snackbar.make(v,"grid  "+model.getId(),Snackbar.LENGTH_SHORT).show();
+                                catfag_product_list.add(model);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+                                category_fragment_progressbar.setVisibility(View.GONE);
+                            }
+
+                        }
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        category_fragment_progressbar.setVisibility(View.GONE);
+                        catfag_grid_adapter.notifyDataSetChanged();
+                        loading = false;
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Snackbar.make(v,"check your internet connection",Snackbar.LENGTH_LONG).show();
+                category_fragment_progressbar.setVisibility(View.GONE);
+
+            }
+        }){
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String credentials = username+":"+ password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+                    if (cacheEntry == null) {
+                        cacheEntry = new Cache.Entry();
+                    }
+                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+                    long now = System.currentTimeMillis();
+                    final long softExpire = now + cacheHitButRefreshed;
+                    final long ttl = now + cacheExpired;
+                    cacheEntry.data = response.data;
+                    cacheEntry.softTtl = softExpire;
+                    cacheEntry.ttl = ttl;
+                    String headerValue;
+                    headerValue = response.headers.get("Date");
+                    if (headerValue != null) {
+                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    headerValue = response.headers.get("Last-Modified");
+                    if (headerValue != null) {
+                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+                    }
+                    cacheEntry.responseHeaders = response.headers;
+                    final String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString), cacheEntry);
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+        };
+
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 

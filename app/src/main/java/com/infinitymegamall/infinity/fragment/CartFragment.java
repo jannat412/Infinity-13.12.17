@@ -101,7 +101,7 @@ public class CartFragment extends Fragment{
     TextView total;
     int total_amount = 0;
 
-
+    String paymentMT="";
     public CartFragment() {
     }
 
@@ -145,7 +145,7 @@ public class CartFragment extends Fragment{
                     String json = sharedPreferences.getString("user",null);
                     Type type = new TypeToken<UserProfile>(){}.getType();
                     user = gsonInstance.fromJson(json,type);
-                    List<LineItem> list = new ArrayList<>();
+                    final List<LineItem> list = new ArrayList<>();
                     if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
                         Snackbar.make(v,"Cart is empty",Snackbar.LENGTH_LONG).show();
                         return;
@@ -153,7 +153,32 @@ public class CartFragment extends Fragment{
                     for(int i=0;i<cartlocalArrayList.size();i++){
                         list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
                     }
-                    product_buy_request(user,list);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle("Invoice")
+                            .setSingleChoiceItems(R.array.delivery, 0,null )
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setNeutralButton("Buy", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+                                    if(selectedPosition==0){
+                                        paymentMT ="cash on delivery Regular";
+                                    }
+                                    else {
+                                        paymentMT = "cash on delivery Express";
+                                    }
+                                    product_buy_request(user,list);
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    builder.create().show();
+
                 }
                 else {
                     Snackbar.make(v,"fill up user info",Snackbar.LENGTH_LONG).show();
@@ -222,23 +247,6 @@ public class CartFragment extends Fragment{
         makeCartList();
     }
 
-    public void loadUserdata(){
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
-        gsonInstance = new Gson();
-        if(sharedPreferences.contains("user")){
-            String json = sharedPreferences.getString("user",null);
-            Type type = new TypeToken<UserProfile>(){}.getType();
-            user = gsonInstance.fromJson(json,type);
-        }
-        else {
-            Snackbar.make(v,"fill up user info",Snackbar.LENGTH_LONG).show();
-            userProfileFragment = new UserProfileFragment();
-            fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.child_fragment_container,userProfileFragment);
-            fragmentTransaction.commit();
-        }
-    }
 
     public void loaddata(){
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preference",Context.MODE_PRIVATE);
@@ -363,7 +371,7 @@ public class CartFragment extends Fragment{
     public void product_buy_request(UserProfile user,List<LineItem> list){
         Pojo obj = new Pojo();
         obj.setPaymentMethod("cash on delivery");
-        obj.setPaymentMethodTitle("cash on delivery");
+        obj.setPaymentMethodTitle(paymentMT);
         obj.setLineItems(list);
         obj.setShipping(new Shipping(user.getFisrtName(),user.getLastName(),user.getStreetAddress(),user.getStreetAddress(),user.getCity(),user.getDistrict(),"","bangladesh"));
         obj.setBilling(new Billing(user.getFisrtName(),user.getLastName(),user.getStreetAddress(),user.getStreetAddress(),user.getCity(),user.getDistrict(),"","bangladesh",user.getEmail(),user.getMobile()));
@@ -385,8 +393,14 @@ public class CartFragment extends Fragment{
                         Snackbar.make(v,"Order placed you will receive a call soon",Snackbar.LENGTH_LONG).show();
                         cartlocalArrayList.clear();
                         cartArrayList.clear();
+                        total.setText("");
                         savedata();
                         cartListAdapter.notifyDataSetChanged();
+
+                        if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
+                            buy_now.setVisibility(View.GONE);
+                            total.setVisibility(View.GONE);
+                        }
 
                     }
                 }, new Response.ErrorListener() {

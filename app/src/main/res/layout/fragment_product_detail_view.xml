@@ -23,12 +23,13 @@
                   android:layout_height="wrap_content"
                   android:background="?android:attr/selectableItemBackground">
                   <ImageView
+                      android:layout_centerHorizontal="true"
                       android:layout_below="@id/product_name"
                       android:id="@+id/galleryView"
                       android:layout_gravity="center"
                       android:layout_width="wrap_content"
-                      android:layout_height="300dp"
-                      android:src="@drawable/loading" />
+                      android:layout_height="350dp"
+                      />
                   <TextView
                       android:layout_margin="5dp"
                       android:id="@+id/product_name"
@@ -42,8 +43,8 @@
                       android:text="@string/loading"/>
                   <ImageView
                       android:id="@+id/backbutton"
-                      android:layout_width="35dp"
-                      android:layout_height="35dp"
+                      android:layout_width="30dp"
+                      android:layout_height="30dp"
                       android:layout_marginLeft="10dp"
                       android:src="@drawable/back" />
 

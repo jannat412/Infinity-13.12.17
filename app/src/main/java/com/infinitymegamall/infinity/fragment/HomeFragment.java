@@ -839,40 +839,32 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     }
     public void lubnan(){
 
-        String query = "lubnan";
-        if(query.trim().length() > 0){
-            Bundle bundle = new Bundle();
-            bundle.putString("search",query);
-            search_fragment = new Search_fragment();
-            search_fragment.setArguments(bundle);
-            fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.child_fragment_container, search_fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-        else {
-            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
-        }
+        Bundle bundle = new Bundle();
+        int id= 293;
+        bundle.putInt("category",id);
+        categoryItemFragment = new CategoryItemFragment();
+        categoryItemFragment.setArguments(bundle);
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+        fragmentTransaction.addToBackStack("categoryItemFragment");
+        fragmentTransaction.commit();
     }
 
     public void richman(){
 
-        String query = "richman";
-        if(query.trim().length() > 0){
-            Bundle bundle = new Bundle();
-            bundle.putString("search",query);
-            search_fragment = new Search_fragment();
-            search_fragment.setArguments(bundle);
-            fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.child_fragment_container, search_fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-        else {
-            Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
-        }
+
+        Bundle bundle = new Bundle();
+        int id= 266;
+        bundle.putInt("category",id);
+        categoryItemFragment = new CategoryItemFragment();
+        categoryItemFragment.setArguments(bundle);
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.child_fragment_container, categoryItemFragment);
+        fragmentTransaction.addToBackStack("categoryItemFragment");
+        fragmentTransaction.commit();
+
     }
 
     @Override
