@@ -157,7 +157,7 @@ public class CartFragment extends Fragment{
                         list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
                     }
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle("Delivery charge(extra)")
+                    builder.setTitle("Delivery charge")
                             .setSingleChoiceItems(R.array.delivery,0,null)
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
