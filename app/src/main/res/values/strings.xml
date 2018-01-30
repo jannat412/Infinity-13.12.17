@@ -44,7 +44,7 @@
         <item>8000</item>
     </string-array>
     <string-array name="delivery">
-        <item>Regular delivery(3-4 days).total + 60tk</item>
-        <item>Express delivery(1-2 days).total + 80tk</item>
+        <item>Regular delivery(3-4 days) total + 60tk</item>
+        <item>Express delivery(1-2 days) total + 80tk</item>
     </string-array>
 </resources>

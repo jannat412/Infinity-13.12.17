@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,6 +101,7 @@ public class CartFragment extends Fragment{
     private UserProfile user;
     TextView total;
     int total_amount = 0;
+    private List <String> delivery_methods;
 
     String paymentMT="";
     public CartFragment() {
@@ -130,6 +132,7 @@ public class CartFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        delivery_methods = new ArrayList<>();
         v = getActivity().findViewById(R.id.home_activity_id);
         total = (TextView) getActivity().findViewById(R.id.total);
         cart_progressbar = (ProgressBar) getActivity().findViewById(R.id.cart_progressbar);
@@ -154,8 +157,8 @@ public class CartFragment extends Fragment{
                         list.add(new LineItem(Integer.valueOf(cartlocalArrayList.get(i).getProductId()),Integer.valueOf(cartlocalArrayList.get(i).getProductQuantity()),0));
                     }
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle("Invoice")
-                            .setSingleChoiceItems(R.array.delivery, 0,null )
+                    builder.setTitle("Delivery charge(extra)")
+                            .setSingleChoiceItems(R.array.delivery,0,null)
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
