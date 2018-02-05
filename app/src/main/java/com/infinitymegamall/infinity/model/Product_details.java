@@ -51,5 +51,27 @@ public class Product_details {
     public void setProduct_image(String product_image) {
         Product_image = product_image;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product_details)) return false;
+
+        Product_details that = (Product_details) o;
+
+        if (getId() != that.getId()) return false;
+        if (!getProduct_name().equals(that.getProduct_name())) return false;
+        if (!getProduct_price().equals(that.getProduct_price())) return false;
+        return getProduct_image().equals(that.getProduct_image());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + getProduct_name().hashCode();
+        result = 31 * result + getProduct_price().hashCode();
+        result = 31 * result + getProduct_image().hashCode();
+        return result;
+    }
 }
 

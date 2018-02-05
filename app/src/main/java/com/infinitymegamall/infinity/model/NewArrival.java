@@ -2,12 +2,15 @@ package com.infinitymegamall.infinity.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+import java.util.Comparator;
 
 /**
  * Created by Jannat Mostafiz on 12/9/2017.
  */
 
-public class NewArrival implements Parcelable {
+public class NewArrival implements Parcelable{
     String newArrival;
     int id;
 
@@ -39,6 +42,24 @@ public class NewArrival implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NewArrival)) return false;
+
+        NewArrival that = (NewArrival) o;
+
+        if (getId() != that.getId()) return false;
+        return getNewArrival().equals(that.getNewArrival());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getNewArrival().hashCode();
+        result = 31 * result + getId();
+        return result;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -61,4 +82,20 @@ public class NewArrival implements Parcelable {
             return new NewArrival[size];
         }
     };
+
+    public static Comparator<NewArrival> namecomparator = new Comparator<NewArrival>(){
+        public int compare(NewArrival s1,NewArrival s2){
+            String d1 = s1.getNewArrival().toUpperCase();
+            String d2 = s2.getNewArrival().toUpperCase();
+            return d1.compareTo(d2);
+        }
+    };
+
+    @Override
+    public String toString() {
+        return "NewArrival{" +
+                "newArrival='" + newArrival + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

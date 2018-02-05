@@ -55,6 +55,7 @@ import com.infinitymegamall.infinity.adapter.CategorylistAdapter;
 import com.infinitymegamall.infinity.adapter.ExclusivelistAdapter;
 import com.infinitymegamall.infinity.adapter.NewArrivalAdapter;
 import com.infinitymegamall.infinity.adapter.Product_details_adapter;
+import com.infinitymegamall.infinity.model.ChildCategory;
 import com.infinitymegamall.infinity.model.Exclusive;
 import com.infinitymegamall.infinity.model.HomeCategory;
 import com.infinitymegamall.infinity.model.NewArrival;
@@ -66,9 +67,13 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -107,8 +112,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private ImageView search_btn;
     private EditText search_input;
     String main_url="https://infinitymegamall.com/wp-json/wc/v2/products?order=asc&category=";
-    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=300&category=";
-    String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
+    String main_url2="https://infinitymegamall.com/wp-json/wc/v2/products?min_price=500&category=";
+    //String url ="https://infinitymegamall.com/wp-json/wc/v2/products?per_page=4&min_price=200";//?after=2017-02-19T16:39:57-08:00";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
     String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0&per_page=10";
@@ -445,7 +450,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                                 model.setNewArrival(obj.getString("name"));
                                 // adding model to category array
                                 bestSellerCategoryArraylist.add(model);
-                                newArrivals.add(model);
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -455,6 +460,14 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
+                        Set<NewArrival> hs = new HashSet<>();
+                        hs.addAll(bestSellerCategoryArraylist);
+                        bestSellerCategoryArraylist.clear();
+                        bestSellerCategoryArraylist.addAll(hs);
+                        Collections.sort(bestSellerCategoryArraylist,NewArrival.namecomparator);
+                        newArrivals.clear();
+                        newArrivals.addAll(hs);
+                        Collections.sort(newArrivals,NewArrival.namecomparator);
                         bestSellerCategoryAdapter.notifyDataSetChanged();
                         newArrivalAdapter.notifyDataSetChanged();
                     }
@@ -519,107 +532,6 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     }
 
 
-
-/*
-
-    public void request2(){
-
-        // Creating volley request obj
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, response.toString());
-
-                        // Parsing json
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-
-                                JSONObject obj = response.getJSONObject(i);
-                                Exclusive model = new Exclusive();
-                                model.setId(obj.getInt("id"));
-                                model.setExclusiveText(obj.getString("name"));
-                                JSONArray img = obj.getJSONArray("images");
-                                JSONObject item = img.getJSONObject(0);
-                                String image = item.getString("src");
-                                model.setImage(image);
-                                // adding model to movies array
-                                exclusives.add(model);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
-                            }
-
-                        }
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-                        exclusivelistAdapter.notifyDataSetChanged();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-
-                Snackbar.make(v,"error req2",Snackbar.LENGTH_LONG).show();
-
-            }
-        }){
-
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                String credentials = username+":"+ password;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", auth);
-                return headers;
-            }
-            */
-/*@Override
-            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
-                    if (cacheEntry == null) {
-                        cacheEntry = new Cache.Entry();
-                    }
-                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
-                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
-                    long now = System.currentTimeMillis();
-                    final long softExpire = now + cacheHitButRefreshed;
-                    final long ttl = now + cacheExpired;
-                    cacheEntry.data = response.data;
-                    cacheEntry.softTtl = softExpire;
-                    cacheEntry.ttl = ttl;
-                    String headerValue;
-                    headerValue = response.headers.get("Date");
-                    if (headerValue != null) {
-                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    headerValue = response.headers.get("Last-Modified");
-                    if (headerValue != null) {
-                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    cacheEntry.responseHeaders = response.headers;
-                    final String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers));
-                    return Response.success(new JSONArray(jsonString), cacheEntry);
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException e) {
-                    return Response.error(new ParseError(e));
-                }
-            }*//*
-
-        };
-
-        // Adding request to request queue
-        Server_request.getInstance().addToRequestQueue(jsObjRequest);
-
-    }
-*/
-
     public void product_details_api_request(String api){
         new_arrival_progress.setVisibility(View.VISIBLE);
         newProductDetails.clear();
@@ -655,6 +567,10 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
+                        Set<Product_details> hs = new HashSet<>();
+                        hs.addAll(newProductDetails);
+                        newProductDetails.clear();
+                        newProductDetails.addAll(hs);
                         new_arrival_progress.setVisibility(View.GONE);
                         newProductDetailAdapter.notifyDataSetChanged();
                     }
@@ -719,7 +635,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
 
     }
-  public void product_details_api_request2(String api){
+
+    public void product_details_api_request2(String api){
         bestseller_progressbar.setVisibility(View.VISIBLE);
       bestSellerProductDetailsArrayList.clear();
         // Creating volley request obj
@@ -754,6 +671,10 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
                         }
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
+                        Set<Product_details> hs = new HashSet<>();
+                        hs.addAll(bestSellerProductDetailsArrayList);
+                        bestSellerProductDetailsArrayList.clear();
+                        bestSellerProductDetailsArrayList.addAll(hs);
                         bestseller_progressbar.setVisibility(View.GONE);
                         bestSellerProductDetailsAdapter.notifyDataSetChanged();
                     }
@@ -837,6 +758,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
             Snackbar.make(v,"search bar is empty",Snackbar.LENGTH_LONG).show();
         }
     }
+
     public void lubnan(){
 
         Bundle bundle = new Bundle();

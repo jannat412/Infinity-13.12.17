@@ -31,13 +31,7 @@
             android:label="@string/title_activity_home_page"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Activity.Test"
-            android:label="@string/title_activity_test"
-            android:theme="@style/AppTheme">
 
-
-        </activity>
     </application>
 
 </manifest>

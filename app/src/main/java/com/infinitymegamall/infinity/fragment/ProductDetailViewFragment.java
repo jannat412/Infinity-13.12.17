@@ -42,7 +42,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.infinitymegamall.infinity.Connection.Server_request;
 import com.infinitymegamall.infinity.MyCategory;
-import com.infinitymegamall.infinity.MyGallery;
 import com.infinitymegamall.infinity.R;
 import com.infinitymegamall.infinity.RecyclerItemClickListener;
 import com.infinitymegamall.infinity.adapter.CategorylistAdapter;

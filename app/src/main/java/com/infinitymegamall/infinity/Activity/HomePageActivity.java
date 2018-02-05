@@ -50,6 +50,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -62,7 +64,7 @@ public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,SwipeRefreshLayout.OnRefreshListener {
 
 
-    LinearLayout parentlayout;
+    private LinearLayout parentlayout;
     public FragmentTransaction fragmentTransaction;
     public FragmentManager fragmentManager;
     private HomeFragment homeFragment;
@@ -80,15 +82,12 @@ public class HomePageActivity extends AppCompatActivity
     private ExpandableListView simpleExpandableListView;
     View v;
 
-    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0";
+    String category_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=0&per_page=10";
     String subcategory_url="https://infinitymegamall.com/wp-json/wc/v2/products/categories?parent=";
     //String product_url ="https://infinitymegamall.com/wp-json/wc/v2/products/52511";
     String username="ck_cf774d8324810207b32ded1a1ed5e973bf01a6fa";
     String password ="cs_ea7d6990bd6e3b6d761ffbc2c222c56746c78d95";
-
-    public void check(){
-
-    }
+    String a ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,13 +106,13 @@ public class HomePageActivity extends AppCompatActivity
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        sub_category_hashmap.clear();
-                        parent_category_arraylist.clear();
+
                         categories_api_request();
 
                     }
                 }
         );
+
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ImageView menuRight = (ImageView) findViewById(R.id.menuRight);
         menuRight.setOnClickListener(
@@ -134,6 +133,9 @@ public class HomePageActivity extends AppCompatActivity
         simpleExpandableListView = (ExpandableListView) findViewById(R.id.category_nav_list);
         // create the adapter by passing your ArrayList data
         listAdapter = new Category_drawer_adapter(HomePageActivity.this, parent_category_arraylist);
+
+        //parent_category_arraylist.add(new ParentCategory("","AA",new ArrayList<ChildCategory>()));
+
         // attach the adapter to the expandable list view
         simpleExpandableListView.setAdapter(listAdapter);
 
@@ -161,27 +163,6 @@ public class HomePageActivity extends AppCompatActivity
                 return false;
             }
         });
-        // setOnGroupClickListener listener for group heading click
-        simpleExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                //get the group header
-
-                if(parent.isGroupExpanded(groupPosition))
-                {
-
-
-                }
-                else{
-
-
-                }
-
-                return false;
-            }
-        });
-
-
 
         parentlayout = (LinearLayout) findViewById(R.id.parentlayout);
         homeFragment = new HomeFragment();
@@ -192,7 +173,6 @@ public class HomePageActivity extends AppCompatActivity
 
         categories_api_request();
 
-        //simpleExpandableListView.setIndicatorBounds(simpleExpandableListView.getRight()- 40, simpleExpandableListView.getWidth());
     }
 
     public void categories_api_request(){
@@ -212,15 +192,19 @@ public class HomePageActivity extends AppCompatActivity
                                 JSONObject obj = response.getJSONObject(i);
                                 id= obj.getString("id");
                                 name=obj.getString("name");
+
                             } catch (JSONException e) {
+
                                 e.printStackTrace();
-                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(v,"something went wrong",Snackbar.LENGTH_LONG).show();
+
                             }
                             subcategories_api_request(id,name);
                         }
                         // notifying list adapter about data changes
                         listAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -320,7 +304,7 @@ public class HomePageActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
-                Snackbar.make(v,"Unable to load sub-category",Snackbar.LENGTH_SHORT).show();
+                //Snackbar.make(v,"Unable to load sub-category",Snackbar.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
             }
         }){
@@ -376,6 +360,7 @@ public class HomePageActivity extends AppCompatActivity
 
 
     }
+
     private void addProduct(String categoryid,String categoryname,String subcategoryid, String subcategoryname){
 
         //check the hash map if the group already exists
@@ -405,6 +390,7 @@ public class HomePageActivity extends AppCompatActivity
         productList.clear();
         productList.addAll(hs);
         headerInfo.setList(productList);
+        Collections.sort(parent_category_arraylist,ParentCategory.categoryComparator);
 
     }
 
@@ -454,7 +440,7 @@ public class HomePageActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.child_fragment_container, homeFragment);
-        fragmentTransaction.addToBackStack("homeFragment");
+        //fragmentTransaction.addToBackStack("homeFragment");
         fragmentTransaction.commit();
     }
 
@@ -499,9 +485,9 @@ public class HomePageActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-
     @Override
     public void onRefresh() {
 
     }
+
 }
