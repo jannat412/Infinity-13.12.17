@@ -81,7 +81,7 @@ public class ProductDetailViewFragment extends Fragment {
     private ArrayList<Product_details> relatedProductsArraylist;
 
     private ImageView galleryView;
-    private TextView product_name, product_price,product_description,product_variation;
+    private TextView product_name, product_price,product_description,product_variation,stock;
     private static String productId="",productsize="",productquantity="";
     private View v;
     private static String url ="https://infinitymegamall.com/wp-json/wc/v2/products?include=";
@@ -163,6 +163,7 @@ public class ProductDetailViewFragment extends Fragment {
         product_description = (TextView) getActivity().findViewById(R.id.product_description);
         product_variation = (TextView) getActivity().findViewById(R.id.product_variation);
         backbutton = (ImageView)getActivity().findViewById(R.id.backbutton);
+        stock = (TextView) getActivity().findViewById(R.id.stock);
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -266,7 +267,14 @@ public class ProductDetailViewFragment extends Fragment {
                             product_name.setText(response.getString("name"));
                             product_price.setText("৳ "+ response.getString("price"));
                             product_description.setText("Description: "+response.getString("short_description"));
-
+                            String stoc = response.getString("in_stock");
+                            if(stoc.equals("true")){
+                                stock.setText("In stock");
+                                stock.setTextColor(R.color.lime);
+                            }else {
+                                stock.setText("Out of stock");
+                                stock.setTextColor(R.color.red);
+                            }
                             JSONArray imagearray = response.getJSONArray("images");
                             if (imagearray!=null){
                             for(int i=0;i<imagearray.length();i++) {
