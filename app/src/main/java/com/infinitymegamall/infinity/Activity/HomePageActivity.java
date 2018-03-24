@@ -106,9 +106,7 @@ public class HomePageActivity extends AppCompatActivity
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-
                         categories_api_request();
-
                     }
                 }
         );

@@ -44,7 +44,8 @@
         <item>8000</item>
     </string-array>
     <string-array name="delivery">
-        <item>Regular delivery(3-4 days) total + 60tk</item>
-        <item>Express delivery(1-2 days) total + 80tk</item>
+        <item>Cash on delivery Regular(3-4 days) total + 60tk</item>
+        <item>Cash on delivery Express(1-2 days) total + 80tk</item>
+        <item>Pay online using your card</item>
     </string-array>
 </resources>

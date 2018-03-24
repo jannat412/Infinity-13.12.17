@@ -60,6 +60,15 @@ import com.infinitymegamall.infinity.model.Product_details;
 import com.infinitymegamall.infinity.model.UserProfile;
 import com.infinitymegamall.infinity.pojo.LineItem;
 import com.infinitymegamall.infinity.pojo.Pojo;
+import com.sslcommerz.library.payment.Classes.PayUsingSSLCommerz;
+import com.sslcommerz.library.payment.Listener.OnPaymentResultListener;
+import com.sslcommerz.library.payment.Util.ConstantData.CurrencyType;
+import com.sslcommerz.library.payment.Util.ConstantData.ErrorKeys;
+import com.sslcommerz.library.payment.Util.ConstantData.SdkCategory;
+import com.sslcommerz.library.payment.Util.ConstantData.SdkType;
+import com.sslcommerz.library.payment.Util.JsonModel.TransactionInfo;
+import com.sslcommerz.library.payment.Util.Model.CustomerFieldModel;
+import com.sslcommerz.library.payment.Util.Model.MandatoryFieldModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,6 +110,9 @@ public class CartFragment extends Fragment{
     private UserProfile user;
     TextView total;
     int total_amount = 0;
+    int online_pm = 0;
+    private String store_id = "infinitymegamalllive001";
+    private String store_pass = "infinitymegamalllive001@ssl";
     private List <String> delivery_methods;
 
     String paymentMT="";
@@ -172,8 +184,12 @@ public class CartFragment extends Fragment{
                                     if(selectedPosition==0){
                                         paymentMT ="cash on delivery Regular";
                                     }
-                                    else {
+                                    else if(selectedPosition==1){
                                         paymentMT = "cash on delivery Express";
+                                    }
+                                    else {
+                                        paymentMT ="Online bank paymennt via ssl commerz";
+                                        online_pm = 1;
                                     }
                                     product_buy_request(user,list);
                                     dialog.dismiss();
@@ -371,7 +387,8 @@ public class CartFragment extends Fragment{
 
     }
 
-    public void product_buy_request(UserProfile user,List<LineItem> list){
+    public void product_buy_request(final UserProfile user, List<LineItem> list){
+        cart_progressbar.setVisibility(View.VISIBLE);
         Pojo obj = new Pojo();
         obj.setPaymentMethod("cash on delivery");
         obj.setPaymentMethodTitle(paymentMT);
@@ -387,22 +404,107 @@ public class CartFragment extends Fragment{
             e.printStackTrace();
         }
 
-
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,order_url,objjj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        String transaction_id="";
+                        String amount = Integer.toString(total_amount);
+                        try {
+                             transaction_id = response.getString("id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Snackbar.make(v, "JSON parse error bal", Snackbar.LENGTH_LONG).show();
+                        }
+                        if(online_pm==1) {
+                            MandatoryFieldModel mandatoryFieldModel = new MandatoryFieldModel(store_id, store_pass, amount, transaction_id, CurrencyType.BDT, SdkType.TESTBOX, SdkCategory.BANK_LIST);
+                            CustomerFieldModel customerFieldModel = new CustomerFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict(), "Bangladesh", user.getMobile(), user.getMobile());
+                            PayUsingSSLCommerz.getInstance().setData(getContext(),mandatoryFieldModel,customerFieldModel,null,null,new OnPaymentResultListener() {
+                                @Override
+                                public void transactionSuccess(TransactionInfo transactionInfo) {
+                                    // If payment is success and risk label is 0.
+                                    if(transactionInfo.getRiskLevel().equals("0")) {
+                                        Log.d(TAG, "Transaction Successfully completed");
+                                        Snackbar.make(v, "Order placed you will receive a call soon", Snackbar.LENGTH_LONG).show();
+                                        cartlocalArrayList.clear();
+                                        cartArrayList.clear();
+                                        total.setText("");
+                                        savedata();
+                                        cartListAdapter.notifyDataSetChanged();
+                                        cart_progressbar.setVisibility(View.GONE);
+                                        if (cartlocalArrayList == null || cartlocalArrayList.size() == 0) {
+                                            buy_now.setVisibility(View.GONE);
+                                            total.setVisibility(View.GONE);
+                                        }
+                                    }
+                                    // Payment is success but payment is not complete yet. Card on hold now.
+                                    else{
+                                        Snackbar.make(v, "Order placed you will receive a call soon"+transactionInfo.getRiskTitle().toString(), Snackbar.LENGTH_LONG).show();
+                                        cartlocalArrayList.clear();
+                                        cartArrayList.clear();
+                                        total.setText("");
+                                        savedata();
+                                        cartListAdapter.notifyDataSetChanged();
+                                        cart_progressbar.setVisibility(View.GONE);
+                                        if (cartlocalArrayList == null || cartlocalArrayList.size() == 0) {
+                                            buy_now.setVisibility(View.GONE);
+                                            total.setVisibility(View.GONE);
+                                        }
+                                        Log.d(TAG, "Transaction in risk. Risk Title : "+transactionInfo.getRiskTitle().toString());
+                                        //Snackbar.make(v,"Transaction in risk. Risk Title : "+transactionInfo.getRiskTitle().toString(),Snackbar.LENGTH_LONG).show();
+                                    }
+                                }
 
-                        Snackbar.make(v,"Order placed you will receive a call soon",Snackbar.LENGTH_LONG).show();
-                        cartlocalArrayList.clear();
-                        cartArrayList.clear();
-                        total.setText("");
-                        savedata();
-                        cartListAdapter.notifyDataSetChanged();
+                                @Override
+                                public void transactionFail(TransactionInfo transactionInfo) {
+                                    // Transaction failed
+                                    Log.e(TAG, "Transaction Fail");
+                                    Snackbar.make(v,"Transaction failed",Snackbar.LENGTH_LONG).show();
+                                }
 
-                        if(cartlocalArrayList==null || cartlocalArrayList.size()==0){
-                            buy_now.setVisibility(View.GONE);
-                            total.setVisibility(View.GONE);
+                                @Override
+                                public void error(int errorCode) {
+                                    switch (errorCode){
+                                        // Your provides information is not valid.
+                                        case ErrorKeys.USER_INPUT_ERROR :
+                                            Snackbar.make(v,"User Input Error",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "User Input Error" );break;
+                                        // Internet is not connected.
+                                        case ErrorKeys.INTERNET_CONNECTION_ERROR :
+                                            Snackbar.make(v,"Internet Connection Error",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "Internet Connection Error" );break;
+                                        // Server is not giving valid data.
+                                        case ErrorKeys.DATA_PARSING_ERROR :
+                                            Snackbar.make(v,"Data Parsing Error",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "Data Parsing Error" );break;
+                                        // User press back button or canceled the transaction.
+                                        case ErrorKeys.CANCEL_TRANSACTION_ERROR :
+                                            Snackbar.make(v,"User Cancel The Transaction",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "User Cancel The Transaction" );break;
+                                        // Server is not responding.
+                                        case ErrorKeys.SERVER_ERROR :
+                                            Snackbar.make(v,"Server Error",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "Server Error" );break;
+                                        // For some reason network is not responding
+                                        case ErrorKeys.NETWORK_ERROR :
+                                            Snackbar.make(v,"Network Error",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "Network Error" );break;
+                                    }
+                                }
+                            });
+
+                        }else {
+                            Snackbar.make(v, "Order placed you will receive a call soon", Snackbar.LENGTH_LONG).show();
+                            cartlocalArrayList.clear();
+                            cartArrayList.clear();
+                            total.setText("");
+                            savedata();
+                            cartListAdapter.notifyDataSetChanged();
+                            cart_progressbar.setVisibility(View.GONE);
+                            if (cartlocalArrayList == null || cartlocalArrayList.size() == 0) {
+                                buy_now.setVisibility(View.GONE);
+                                total.setVisibility(View.GONE);
+                            }
                         }
 
                     }
@@ -412,7 +514,6 @@ public class CartFragment extends Fragment{
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
 
                 Snackbar.make(v,"Error order did not placed",Snackbar.LENGTH_LONG).show();
-
 
             }
         }){
