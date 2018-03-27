@@ -69,6 +69,7 @@ import com.sslcommerz.library.payment.Util.ConstantData.SdkType;
 import com.sslcommerz.library.payment.Util.JsonModel.TransactionInfo;
 import com.sslcommerz.library.payment.Util.Model.CustomerFieldModel;
 import com.sslcommerz.library.payment.Util.Model.MandatoryFieldModel;
+import com.sslcommerz.library.payment.Util.Model.ShippingFieldModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -409,17 +410,19 @@ public class CartFragment extends Fragment{
                     @Override
                     public void onResponse(JSONObject response) {
                         String transaction_id="";
-                        String amount = Integer.toString(total_amount);
+                        String amount = Integer.toString(total_amount)+".00";
                         try {
                              transaction_id = response.getString("id");
+                             //Snackbar.make(v, transaction_id, Snackbar.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Snackbar.make(v, "JSON parse error bal", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(v, "JSON parse error", Snackbar.LENGTH_LONG).show();
                         }
                         if(online_pm==1) {
                             MandatoryFieldModel mandatoryFieldModel = new MandatoryFieldModel(store_id, store_pass, amount, transaction_id, CurrencyType.BDT, SdkType.TESTBOX, SdkCategory.BANK_LIST);
                             CustomerFieldModel customerFieldModel = new CustomerFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict(), "Bangladesh", user.getMobile(), user.getMobile());
-                            PayUsingSSLCommerz.getInstance().setData(getContext(),mandatoryFieldModel,customerFieldModel,null,null,new OnPaymentResultListener() {
+                            ShippingFieldModel shippingFieldModel = new ShippingFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict());
+                            PayUsingSSLCommerz.getInstance().setData(getContext(),mandatoryFieldModel,customerFieldModel,shippingFieldModel,null,new OnPaymentResultListener() {
                                 @Override
                                 public void transactionSuccess(TransactionInfo transactionInfo) {
                                     // If payment is success and risk label is 0.
