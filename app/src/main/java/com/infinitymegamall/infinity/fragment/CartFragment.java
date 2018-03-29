@@ -413,16 +413,16 @@ public class CartFragment extends Fragment{
                         String amount = Integer.toString(total_amount)+".00";
                         try {
                              transaction_id = response.getString("id");
-                             //Snackbar.make(v, transaction_id, Snackbar.LENGTH_LONG).show();
+                             //Snackbar.make(v, amount, Snackbar.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Snackbar.make(v, "JSON parse error", Snackbar.LENGTH_LONG).show();
                         }
                         if(online_pm==1) {
-                            MandatoryFieldModel mandatoryFieldModel = new MandatoryFieldModel(store_id, store_pass, amount, transaction_id, CurrencyType.BDT, SdkType.TESTBOX, SdkCategory.BANK_LIST);
-                            CustomerFieldModel customerFieldModel = new CustomerFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict(), "Bangladesh", user.getMobile(), user.getMobile());
-                            ShippingFieldModel shippingFieldModel = new ShippingFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict());
-                            PayUsingSSLCommerz.getInstance().setData(getContext(),mandatoryFieldModel,customerFieldModel,shippingFieldModel,null,new OnPaymentResultListener() {
+                            MandatoryFieldModel mandatoryFieldModel = new MandatoryFieldModel(store_id, store_pass, amount, transaction_id, CurrencyType.BDT, SdkType.LIVE, SdkCategory.BANK_LIST);
+                            //CustomerFieldModel customerFieldModel = new CustomerFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict(), "Bangladesh", user.getMobile(), user.getMobile());
+                            //ShippingFieldModel shippingFieldModel = new ShippingFieldModel(user.getFisrtName(),user.getEmail(), user.getStreetAddress(), user.getStreetAddress(), user.getCity(), user.getDistrict(), user.getDistrict());
+                            PayUsingSSLCommerz.getInstance().setData(getContext(),mandatoryFieldModel,new OnPaymentResultListener() {
                                 @Override
                                 public void transactionSuccess(TransactionInfo transactionInfo) {
                                     // If payment is success and risk label is 0.
@@ -539,7 +539,7 @@ public class CartFragment extends Fragment{
                 return super.parseNetworkResponse(response);
             }
         };
-        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 0,
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(10 * 1000, 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Adding request to request queue
         Server_request.getInstance().addToRequestQueue(jsObjRequest);
